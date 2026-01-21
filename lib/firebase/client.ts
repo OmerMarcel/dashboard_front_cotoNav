@@ -11,7 +11,7 @@ import { Auth, getAuth, signInWithCustomToken } from 'firebase/auth'
  *   mais il est fortement recommandé de renseigner les variables d’env en prod.
  */
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || 'AIzaSyDPAKyaXFXOQUDrCADfMAOS3yPSRDvuHGI',
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || 'AIzaSyBebnTmCEwob4-69Gf6XrsE8b1ITs-Mwpc',
   authDomain:
     process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || 'geoloc-cotonou.firebaseapp.com',
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'geoloc-cotonou',
@@ -19,9 +19,8 @@ const firebaseConfig = {
     process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'geoloc-cotonou.firebasestorage.app',
   messagingSenderId:
     process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '191342105680',
-  // NOTE: L'appId Web est souvent différent de l'appId Android. À fournir via env dès que possible.
   appId:
-    process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '1:191342105680:android:842ebafae0e595eb19ed55',
+    process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '1:191342105680:web:6b027e85179f46d419ed55',
 }
 
 let _app: FirebaseApp | null = null
