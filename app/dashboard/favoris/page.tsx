@@ -62,7 +62,7 @@ export default function FavorisPage() {
       }
 
       console.log("📥 Récupération des favoris depuis le backend...");
-      const response = await axios.get(`${API_URL}/infrastructures/favorites`, {
+      const response = await axios.get(`${API_URL}/favorites`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -129,17 +129,17 @@ export default function FavorisPage() {
 
   const handleRemoveFavorite = async (id?: string) => {
     if (!id) return;
-
+  
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
-
-      await axios.delete(`${API_URL}/infrastructures/${id}/favorite`, {
+  
+      await axios.delete(`${API_URL}/favorites/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
+  
       setFavorites((prev) =>
         prev.filter((infra) => (infra.id || infra._id) !== id)
       );
@@ -148,7 +148,7 @@ export default function FavorisPage() {
       setError("Impossible de retirer ce favori.");
     }
   };
-
+  
   const getTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
       toilettes_publiques: "Toilettes publiques",

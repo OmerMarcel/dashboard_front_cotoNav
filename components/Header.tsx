@@ -402,14 +402,14 @@ export default function Header() {
               className="flex items-center gap-2 md:gap-3 p-2 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <div className="hidden md:block text-right">
-                <div className="text-sm font-medium text-gray-900">
-                  {user?.prenom} {user?.nom}
-                </div>
+              <div className="text-sm font-medium text-gray-900">
+                {user?.prenom} {user?.nom}
+              </div>
                 <div className="text-xs text-gray-500">{getRoleLabel(user?.role || '')}</div>
-              </div>
+            </div>
               <div className="w-8 h-8 md:w-10 md:h-10 bg-primary-600 rounded-full flex items-center justify-center text-white font-medium text-sm md:text-base">
-                {user?.prenom?.charAt(0)}{user?.nom?.charAt(0)}
-              </div>
+              {user?.prenom?.charAt(0)}{user?.nom?.charAt(0)}
+            </div>
               <FiChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${showMenu ? 'rotate-180' : ''}`} />
             </button>
 
