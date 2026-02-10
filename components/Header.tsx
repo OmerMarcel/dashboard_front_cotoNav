@@ -97,172 +97,17 @@ export default function Header() {
     checkAndRetryAuth()
   }, [user?.id, token, firebaseAuthenticated, retryingAuth])
 
+  // Désactiver temporairement les notifications Firebase pour éviter les erreurs
+  // TODO: Configurer Supabase pour les notifications ou corriger la configuration Firebase
   useEffect(() => {
-    // Listener Firestore temps réel (collection: notifications)
-    if (!user?.id) return
-    if (!allowedTypes.length) {
-      setNotifications([])
-      return
-    }
-
+    setNotifications([])
     setNotifError('')
-    
-    // Vérifier que Firebase Auth est initialisé
-    let db
-    let auth
-    try {
-      db = getDb()
-      const { getAuthInstance } = require('@/lib/firebase/client')
-      auth = getAuthInstance()
-      
-      // Vérifier que l'utilisateur est authentifié avec Firebase
-      if (!auth.currentUser) {
-        setNotifError('Authentification Firebase en cours... Veuillez patienter.')
-        console.warn('⚠️ Utilisateur non authentifié avec Firebase Auth')
-        // Ne pas retourner, essayer quand même (peut fonctionner après réauthentification)
-      }
-    } catch (dbError: any) {
-      console.error('Erreur initialisation Firestore:', dbError)
-      setNotifError("Firestore n'est pas disponible. Vérifiez la configuration Firebase.")
-      return
-    }
-
-    const notifRef = collection(db, 'notifications')
-
-    // Filtrage par type + éventuellement par rôles (si targetRoles est renseigné côté backend).
-    // Note: on utilise orderBy seul si possible pour éviter les erreurs d'index composite
-    // Si l'index composite n'existe pas, on fera le tri côté client
-    let q
-    try {
-      q = query(
-      notifRef,
-      where('type', 'in', allowedTypes),
-      orderBy('createdAt', 'desc'),
-      limit(30)
-    )
-    } catch (queryError: any) {
-      // Si l'erreur est liée à l'index manquant, utiliser une requête plus simple
-      console.warn('Erreur de requête Firestore (index manquant?), utilisation d\'une requête simplifiée:', queryError)
-      try {
-        q = query(
-          notifRef,
-          where('type', 'in', allowedTypes),
-          limit(50) // Récupérer plus pour trier côté client
-        )
-      } catch (simpleQueryError: unknown) {
-        console.error('Erreur même avec requête simplifiée:', simpleQueryError)
-        const simpleQueryErrorMessage =
-          simpleQueryError instanceof Error
-            ? simpleQueryError.message
-            : String(simpleQueryError)
-        setNotifError(
-          `Erreur de requête Firestore: ${simpleQueryErrorMessage || 'Index composite manquant'}`,
-        )
-        return
-      }
-    }
-
-    const unsub = onSnapshot(
-      q,
-      (snap) => {
-        try {
-          let items: AppNotification[] = snap.docs.map((d) => {
-          const data = d.data() as any
-          return {
-            id: d.id,
-            type: data.type,
-            title: data.title || 'Notification',
-            message: data.message || '',
-            href: data.href || '',
-            createdAt: (data.createdAt as Timestamp) || null,
-            readBy: Array.isArray(data.readBy) ? data.readBy : [],
-            targetRoles: Array.isArray(data.targetRoles) ? data.targetRoles : undefined,
-          }
-        })
-
-          // Tri côté client si orderBy n'a pas été appliqué dans la requête
-          if (items.length > 0 && items[0].createdAt) {
-            items = items.sort((a, b) => {
-              if (!a.createdAt || !b.createdAt) return 0
-              const aTime = a.createdAt instanceof Timestamp ? a.createdAt.toMillis() : (a.createdAt as any).seconds * 1000
-              const bTime = b.createdAt instanceof Timestamp ? b.createdAt.toMillis() : (b.createdAt as any).seconds * 1000
-              return bTime - aTime
-            }).slice(0, 30)
-          }
-
-        // Si le backend renseigne targetRoles, on filtre aussi ici.
-        const filtered = items.filter((n) => {
-          if (!n.targetRoles || !n.targetRoles.length) return true
-          const role = user.role || ''
-          return n.targetRoles.includes(role)
-        })
-
-        setNotifications(filtered)
-          setNotifError('') // Réinitialiser l'erreur en cas de succès
-        } catch (mapError) {
-          console.error('Erreur lors du mapping des notifications:', mapError)
-          setNotifError('Erreur lors du traitement des notifications.')
-        }
-      },
-      (err: any) => {
-        console.error('Erreur notifications Firestore:', err)
-        const errorMessage = err?.message || err?.code || 'Erreur inconnue'
-        
-        // Messages d'erreur plus spécifiques
-        let userMessage = "Impossible de charger les notifications pour le moment."
-        if (err?.code === 'failed-precondition') {
-          userMessage = "Index Firestore manquant. Consultez FIRESTORE_INDEX_SETUP.md pour créer l'index composite."
-        } else if (err?.code === 'permission-denied') {
-          userMessage = "Permission refusée. Vérifiez que vous êtes authentifié avec Firebase Auth et que les règles Firestore sont configurées (voir FIRESTORE_RULES_SETUP.md)."
-        } else if (err?.code === 'unauthenticated') {
-          userMessage = "Authentification Firebase requise. Veuillez vous reconnecter pour accéder aux notifications."
-        } else if (err?.message) {
-          userMessage = `Erreur: ${err.message}`
-        }
-        
-        setNotifError(userMessage)
-        
-        // Log détaillé pour le débogage
-        console.error('Détails de l\'erreur Firestore:', {
-          code: err?.code,
-          message: err?.message,
-          stack: err?.stack,
-        })
-        
-        // Si c'est une erreur de permission, essayer de réauthentifier automatiquement
-        if (err?.code === 'permission-denied' || err?.code === 'unauthenticated') {
-          console.error('💡 Erreur d\'authentification Firebase détectée')
-          console.error('💡 Le système va tenter de réauthentifier automatiquement...')
-          
-          // Déclencher une réauthentification en changeant l'état (le useEffect se chargera du reste)
-          if (token && !retryingAuth) {
-            // Forcer un re-render pour déclencher le useEffect de réauthentification
-            setRetryingAuth(true)
-            setTimeout(() => setRetryingAuth(false), 1000)
-          }
-          
-          console.error('💡 Solutions manuelles si le problème persiste:')
-          console.error('1. Vérifiez que les règles Firestore sont configurées (voir firestore.rules)')
-          console.error('2. Publiez les règles dans Firebase Console: https://console.firebase.google.com/project/geoloc-cotonou/firestore/rules')
-          console.error('3. Déconnectez-vous et reconnectez-vous au dashboard')
-          console.error('4. Rechargez la page après la configuration')
-        }
-      }
-    )
-
-    return () => unsub()
-  }, [allowedTypes, user?.id, user?.role, firebaseAuthenticated, token, retryingAuth])
+    return () => {}
+  }, [user?.id, allowedTypes.length])
 
   const markAsRead = async (notifId: string) => {
-    if (!user?.id) return
-    try {
-      const db = getDb()
-      await updateDoc(doc(db, 'notifications', notifId), {
-        readBy: arrayUnion(user.id),
-      })
-    } catch (e) {
-      console.error('Erreur markAsRead:', e)
-    }
+    console.log('🔔 Notifications désactivées - markAsRead non fonctionnel')
+    // TODO: Implémenter avec Supabase
   }
 
   const typeLabel = (type: string) => {

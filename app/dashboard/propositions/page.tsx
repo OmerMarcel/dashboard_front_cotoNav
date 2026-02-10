@@ -1,189 +1,236 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import axios from 'axios'
-import Link from 'next/link'
-import { FiClock, FiCheck, FiX, FiEye, FiMapPin, FiXCircle } from 'react-icons/fi'
+import { useEffect, useState } from "react";
+import axios from "axios";
+import Link from "next/link";
+import {
+  FiClock,
+  FiCheck,
+  FiX,
+  FiEye,
+  FiMapPin,
+  FiXCircle,
+} from "react-icons/fi";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
 interface PropositionUser {
-  id?: string
-  nom?: string
-  prenom?: string
-  email?: string
+  id?: string;
+  nom?: string;
+  prenom?: string;
+  email?: string;
 }
 
 interface PropositionLocalisation {
-  adresse?: string
-  quartier?: string
-  commune?: string
-  coordinates?: [number, number]
+  adresse?: string;
+  quartier?: string;
+  commune?: string;
+  coordinates?: [number, number];
 }
 
 interface PropositionContact {
-  telephone?: string
-  website?: string
+  telephone?: string;
+  website?: string;
 }
 
 interface Proposition {
-  id: string
-  nom: string
-  type: string
-  localisation?: PropositionLocalisation
-  statut: string
-  propose_par?: PropositionUser
-  description?: string
-  photos?: string[]
-  images?: string[]
-  contact?: PropositionContact
-  horaires?: Record<string, string>
-  openingHours?: Record<string, string>
-  equipements?: string[]
-  equipments?: string[]
-  createdAt?: string
-  created_at?: string
+  id: string;
+  nom: string;
+  type: string;
+  localisation?: PropositionLocalisation;
+  statut: string;
+  propose_par?: PropositionUser;
+  description?: string;
+  photos?: string[];
+  images?: string[];
+  contact?: PropositionContact;
+  horaires?: Record<string, string>;
+  openingHours?: Record<string, string>;
+  equipements?: string[];
+  equipments?: string[];
+  createdAt?: string;
+  created_at?: string;
 }
 
 interface CreatedInfrastructure {
-  id?: string
-  _id?: string
-  nom?: string
+  id?: string;
+  _id?: string;
+  nom?: string;
   localisation?: {
-    adresse?: string
-    quartier?: string
-  }
-  type?: string
+    adresse?: string;
+    quartier?: string;
+  };
+  type?: string;
 }
 
 export default function PropositionsPage() {
-  const [propositions, setPropositions] = useState<Proposition[]>([])
-  const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState('')
-  const [detailModalOpen, setDetailModalOpen] = useState(false)
-  const [selectedProposition, setSelectedProposition] = useState<Proposition | null>(null)
-  const [processingAction, setProcessingAction] = useState<{ id: string; type: 'approve' | 'reject' } | null>(null)
-  const [recentInfrastructure, setRecentInfrastructure] = useState<CreatedInfrastructure | null>(null)
+  const [propositions, setPropositions] = useState<Proposition[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("");
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [selectedProposition, setSelectedProposition] =
+    useState<Proposition | null>(null);
+  const [processingAction, setProcessingAction] = useState<{
+    id: string;
+    type: "approve" | "reject";
+  } | null>(null);
+  const [recentInfrastructure, setRecentInfrastructure] =
+    useState<CreatedInfrastructure | null>(null);
+  const [imageModalUrl, setImageModalUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchPropositions()
-  }, [filter])
+    fetchPropositions();
+  }, [filter]);
 
   const fetchPropositions = async () => {
     try {
-      const params = filter ? `?statut=${filter}` : ''
-      const response = await axios.get(`${API_URL}/propositions${params}`)
-      setPropositions(response.data.data ?? [])
+      const params = filter ? `?statut=${filter}` : "";
+      const token = localStorage.getItem("token");
+      const response = await axios.get(`${API_URL}/propositions${params}`, {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+      });
+      setPropositions(response.data.data ?? []);
     } catch (error) {
-      console.error('Erreur:', error)
+      console.error("Erreur:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleApprove = async (id: string) => {
     try {
-      setProcessingAction({ id, type: 'approve' })
-      const response = await axios.post(`${API_URL}/propositions/${id}/approuver`)
-      const infrastructure: CreatedInfrastructure | undefined = response.data?.infrastructure
-      
+      const token = localStorage.getItem("token");
+      setProcessingAction({ id, type: "approve" });
+      const response = await axios.post(
+        `${API_URL}/propositions/${id}/approuver`,
+        {},
+        {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        },
+      );
+      const infrastructure: CreatedInfrastructure | undefined =
+        response.data?.infrastructure;
+
       // Mettre à jour immédiatement le statut dans la liste
       setPropositions((prev) =>
         prev.map((prop) =>
-          prop.id === id
-            ? { ...prop, statut: 'approuve' }
-            : prop
-        )
-      )
-      
+          prop.id === id ? { ...prop, statut: "approuve" } : prop,
+        ),
+      );
+
       // Mettre à jour aussi la proposition sélectionnée dans la modal si c'est celle-ci
       if (selectedProposition?.id === id) {
-        setSelectedProposition({ ...selectedProposition, statut: 'approuve' })
+        setSelectedProposition({ ...selectedProposition, statut: "approuve" });
       }
-      
+
       if (infrastructure) {
-        setRecentInfrastructure(infrastructure)
+        setRecentInfrastructure(infrastructure);
       }
-      
+
       // Rafraîchir la liste depuis le serveur
-      await fetchPropositions()
-      
+      await fetchPropositions();
+
       // Déclencher un événement pour rafraîchir la page infrastructures si elle est ouverte
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('infrastructureCreated', { 
-          detail: { infrastructureId: infrastructure?.id || infrastructure?._id } 
-        }))
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("infrastructureCreated", {
+            detail: {
+              infrastructureId: infrastructure?.id || infrastructure?._id,
+            },
+          }),
+        );
       }
-      
+
       // Fermer la modal après un court délai pour montrer le succès
       if (selectedProposition?.id === id) {
         setTimeout(() => {
-          closeDetails()
-        }, 1500)
+          closeDetails();
+        }, 1500);
       }
     } catch (error: any) {
-      console.error('❌ Erreur lors de l\'approbation:', error)
-      const errorMessage = error.response?.data?.message || 
-                          error.response?.data?.error || 
-                          error.message || 
-                          'Erreur lors de l\'approbation de la proposition. Veuillez réessayer.'
-      alert(`Erreur: ${errorMessage}`)
+      console.error("❌ Erreur lors de l'approbation:", error);
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        error.message ||
+        "Erreur lors de l'approbation de la proposition. Veuillez réessayer.";
+      alert(`Erreur: ${errorMessage}`);
     } finally {
-      setProcessingAction(null)
+      setProcessingAction(null);
     }
-  }
+  };
 
   const handleReject = async (id: string) => {
-    const commentaire = prompt('Raison du rejet (optionnel):')
+    const commentaire = prompt("Raison du rejet (optionnel):");
     try {
-      setProcessingAction({ id, type: 'reject' })
-      await axios.post(`${API_URL}/propositions/${id}/rejeter`, { commentaire })
+      const token = localStorage.getItem("token");
+      setProcessingAction({ id, type: "reject" });
+      await axios.post(
+        `${API_URL}/propositions/${id}/rejeter`,
+        {
+          commentaire,
+        },
+        {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        },
+      );
       setPropositions((prev) =>
         prev.map((prop) =>
           prop.id === id
-            ? { ...prop, statut: 'rejete', commentaire_moderation: commentaire ?? '' }
-            : prop
-        )
-      )
-      fetchPropositions()
+            ? {
+                ...prop,
+                statut: "rejete",
+                commentaire_moderation: commentaire ?? "",
+              }
+            : prop,
+        ),
+      );
+      fetchPropositions();
     } catch (error) {
-      console.error('Erreur:', error)
+      console.error("Erreur:", error);
     } finally {
-      setProcessingAction(null)
+      setProcessingAction(null);
     }
-  }
+  };
 
   const getTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
-      toilettes_publiques: 'Toilettes publiques',
-      parc_jeux: 'Parc de jeux',
-      centre_sante: 'Centre de santé',
-      installation_sportive: 'Installation sportive',
-      espace_divertissement: 'Espace de divertissement',
-      autre: 'Autre'
-    }
-    return labels[type] || type
-  }
+      toilettes_publiques: "Toilettes publiques",
+      parc_jeux: "Parc de jeux",
+      centre_sante: "Centre de santé",
+      installation_sportive: "Installation sportive",
+      espace_divertissement: "Espace de divertissement",
+      autre: "Autre",
+    };
+    return labels[type] || type;
+  };
 
   const openDetails = (proposition: Proposition) => {
-    setSelectedProposition(proposition)
-    setDetailModalOpen(true)
-  }
+    setSelectedProposition(proposition);
+    setDetailModalOpen(true);
+  };
 
   const closeDetails = () => {
-    setDetailModalOpen(false)
-    setSelectedProposition(null)
-  }
+    setDetailModalOpen(false);
+    setSelectedProposition(null);
+    setImageModalUrl(null);
+  };
 
   const formatCoordinate = (value?: number) => {
-    if (typeof value !== 'number' || Number.isNaN(value)) {
-      return '—'
+    if (typeof value !== "number" || Number.isNaN(value)) {
+      return "—";
     }
-    return value.toFixed(6)
-  }
+    return value.toFixed(6);
+  };
 
   if (loading) {
-    return <div className="text-center py-12">Chargement...</div>
+    return <div className="text-center py-12">Chargement...</div>;
   }
 
   return (
@@ -196,9 +243,16 @@ export default function PropositionsPage() {
                 <FiCheck className="w-6 h-6 text-green-600" />
               </div>
               <div>
-                <p className="text-green-800 font-semibold text-lg">✅ Proposition approuvée avec succès</p>
+                <p className="text-green-800 font-semibold text-lg">
+                  ✅ Proposition approuvée avec succès
+                </p>
                 <p className="text-green-700 text-sm mt-1">
-                  L'infrastructure <strong>{recentInfrastructure.nom || 'Une infrastructure'}</strong> a été automatiquement ajoutée à la liste des infrastructures et est maintenant visible par tous les utilisateurs.
+                  L'infrastructure{" "}
+                  <strong>
+                    {recentInfrastructure.nom || "Une infrastructure"}
+                  </strong>{" "}
+                  a été automatiquement ajoutée à la liste des infrastructures
+                  et est maintenant visible par tous les utilisateurs.
                 </p>
               </div>
             </div>
@@ -212,17 +266,6 @@ export default function PropositionsPage() {
           </div>
           <div className="flex gap-2">
             <Link
-              href={
-                recentInfrastructure.id || recentInfrastructure._id
-                  ? `/dashboard/infrastructures/${recentInfrastructure.id || recentInfrastructure._id}`
-                  : '/dashboard/infrastructures'
-              }
-              className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
-            >
-              <FiMapPin />
-              Voir l'infrastructure
-            </Link>
-            <Link
               href="/dashboard/infrastructures"
               className="inline-flex items-center gap-2 px-4 py-2 bg-white text-green-700 text-sm font-medium rounded-lg border border-green-300 hover:bg-green-50 transition-colors"
             >
@@ -235,7 +278,9 @@ export default function PropositionsPage() {
 
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Propositions</h1>
-        <p className="text-gray-600 mt-1">Modérer les propositions d'infrastructures</p>
+        <p className="text-gray-600 mt-1">
+          Modérer les propositions d'infrastructures
+        </p>
       </div>
 
       {/* Filtre */}
@@ -259,56 +304,65 @@ export default function PropositionsPage() {
             <div className="flex justify-between items-start">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <h3 className="text-lg font-semibold text-gray-900">{prop.nom}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {prop.nom}
+                  </h3>
                   <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
                     {getTypeLabel(prop.type)}
                   </span>
-                  <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                    prop.statut === 'en_attente' ? 'bg-yellow-100 text-yellow-800' :
-                    prop.statut === 'approuve' ? 'bg-green-100 text-green-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    {prop.statut === 'en_attente' ? 'En attente' :
-                     prop.statut === 'approuve' ? 'Approuvée' : 'Rejetée'}
+                  <span
+                    className={`px-2 py-1 text-xs font-medium rounded-full ${
+                      prop.statut === "en_attente"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : prop.statut === "approuve"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {prop.statut === "en_attente"
+                      ? "En attente"
+                      : prop.statut === "approuve"
+                        ? "Approuvée"
+                        : "Rejetée"}
                   </span>
                 </div>
                 <p className="text-sm text-gray-600 mb-2">
                   <FiClock className="inline mr-1" />
-                  {prop.localisation?.adresse ?? 'Adresse inconnue'}
+                  {prop.localisation?.adresse ?? "Adresse inconnue"}
                   {prop.localisation?.quartier
                     ? `, ${prop.localisation?.quartier}`
-                    : ''}
+                    : ""}
                 </p>
                 <p className="text-sm text-gray-500">
                   {(() => {
-                    const proposer = prop.propose_par
+                    const proposer = prop.propose_par;
                     const nameParts =
                       proposer != null
                         ? [proposer.prenom, proposer.nom].filter(
                             (value): value is string => {
-                              if (typeof value !== 'string') return false
-                              return value.trim().length > 0
-                            }
+                              if (typeof value !== "string") return false;
+                              return value.trim().length > 0;
+                            },
                           )
-                        : []
+                        : [];
                     const displayName =
                       nameParts.length > 0
-                        ? nameParts.join(' ')
-                        : 'Utilisateur inconnu'
-                    const email = proposer?.email ?? 'Email inconnu'
-                    return `Proposé par ${displayName} (${email})`
+                        ? nameParts.join(" ")
+                        : "Utilisateur inconnu";
+                    const email = proposer?.email ?? "Email inconnu";
+                    return `Proposé par ${displayName} (${email})`;
                   })()}
                 </p>
                 <p className="text-xs text-gray-400 mt-2">
                   {(() => {
-                    const createdOn = prop.createdAt || prop.created_at
+                    const createdOn = prop.createdAt || prop.created_at;
                     if (!createdOn) {
-                      return 'Date inconnue'
+                      return "Date inconnue";
                     }
-                    const date = new Date(createdOn)
+                    const date = new Date(createdOn);
                     return isNaN(date.getTime())
-                      ? 'Date inconnue'
-                      : date.toLocaleDateString('fr-FR')
+                      ? "Date inconnue"
+                      : date.toLocaleDateString("fr-FR");
                   })()}
                 </p>
               </div>
@@ -319,7 +373,7 @@ export default function PropositionsPage() {
                 >
                   <FiEye /> Voir les détails
                 </button>
-                {prop.statut === 'en_attente' ? (
+                {prop.statut === "en_attente" ? (
                   <>
                     <button
                       onClick={() => handleApprove(prop.id)}
@@ -327,9 +381,10 @@ export default function PropositionsPage() {
                       className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-60 flex items-center gap-2"
                     >
                       <FiCheck />
-                      {processingAction?.id === prop.id && processingAction.type === 'approve'
-                        ? 'Approbation...'
-                        : 'Approuver'}
+                      {processingAction?.id === prop.id &&
+                      processingAction.type === "approve"
+                        ? "Approbation..."
+                        : "Approuver"}
                     </button>
                     <button
                       onClick={() => handleReject(prop.id)}
@@ -337,10 +392,13 @@ export default function PropositionsPage() {
                       className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-60 flex items-center gap-2"
                     >
                       <FiX />
-                      {processingAction?.id === prop.id && processingAction.type === 'reject' ? 'Rejet...' : 'Rejeter'}
+                      {processingAction?.id === prop.id &&
+                      processingAction.type === "reject"
+                        ? "Rejet..."
+                        : "Rejeter"}
                     </button>
                   </>
-                ) : prop.statut === 'approuve' ? (
+                ) : prop.statut === "approuve" ? (
                   <button
                     disabled
                     className="px-4 py-2 bg-green-100 text-green-700 rounded-lg flex items-center gap-2 cursor-default"
@@ -366,10 +424,14 @@ export default function PropositionsPage() {
           <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-4">
             <div className="flex justify-between items-start">
               <div>
-                <h2 className="text-2xl font-semibold text-gray-900">{selectedProposition.nom}</h2>
+                <h2 className="text-2xl font-semibold text-gray-900">
+                  {selectedProposition.nom}
+                </h2>
                 <p className="text-gray-500 text-sm">
-                  {getTypeLabel(selectedProposition.type)} • Statut :{' '}
-                  <span className="font-medium">{selectedProposition.statut}</span>
+                  {getTypeLabel(selectedProposition.type)} • Statut :{" "}
+                  <span className="font-medium">
+                    {selectedProposition.statut}
+                  </span>
                 </p>
               </div>
               <button
@@ -382,38 +444,53 @@ export default function PropositionsPage() {
             </div>
 
             <section className="space-y-2">
-              <h3 className="text-lg font-semibold text-gray-800">Description</h3>
+              <h3 className="text-lg font-semibold text-gray-800">
+                Description
+              </h3>
               <p className="text-gray-600 whitespace-pre-line">
-                {selectedProposition.description || 'Aucune description fournie.'}
+                {selectedProposition.description ||
+                  "Aucune description fournie."}
               </p>
             </section>
 
             <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-                <h4 className="text-sm font-semibold text-gray-700 uppercase">Localisation</h4>
+                <h4 className="text-sm font-semibold text-gray-700 uppercase">
+                  Localisation
+                </h4>
                 <p className="text-sm text-gray-600 flex items-center gap-2">
                   <FiMapPin className="text-primary-500" />
-                  {selectedProposition.localisation?.adresse || 'Adresse inconnue'}
+                  {selectedProposition.localisation?.adresse ||
+                    "Adresse inconnue"}
                 </p>
                 <p className="text-sm text-gray-600">
-                  Quartier : {selectedProposition.localisation?.quartier || '—'}
+                  Quartier : {selectedProposition.localisation?.quartier || "—"}
                 </p>
                 <p className="text-sm text-gray-600">
-                  Commune : {selectedProposition.localisation?.commune || '—'}
+                  Commune : {selectedProposition.localisation?.commune || "—"}
                 </p>
                 <p className="text-xs text-gray-500">
-                  Coordonnées : lat {formatCoordinate(selectedProposition.localisation?.coordinates?.[1])} / long{' '}
-                  {formatCoordinate(selectedProposition.localisation?.coordinates?.[0])}
+                  Coordonnées : lat{" "}
+                  {formatCoordinate(
+                    selectedProposition.localisation?.coordinates?.[1],
+                  )}{" "}
+                  / long{" "}
+                  {formatCoordinate(
+                    selectedProposition.localisation?.coordinates?.[0],
+                  )}
                 </p>
               </div>
 
               <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-                <h4 className="text-sm font-semibold text-gray-700 uppercase">Contact</h4>
+                <h4 className="text-sm font-semibold text-gray-700 uppercase">
+                  Contact
+                </h4>
                 <p className="text-sm text-gray-600">
-                  Téléphone : {selectedProposition.contact?.telephone || 'Non fourni'}
+                  Téléphone :{" "}
+                  {selectedProposition.contact?.telephone || "Non fourni"}
                 </p>
                 <p className="text-sm text-gray-600">
-                  Site web :{' '}
+                  Site web :{" "}
                   {selectedProposition.contact?.website ? (
                     <a
                       href={selectedProposition.contact.website}
@@ -424,7 +501,7 @@ export default function PropositionsPage() {
                       {selectedProposition.contact.website}
                     </a>
                   ) : (
-                    'Non fourni'
+                    "Non fourni"
                   )}
                 </p>
               </div>
@@ -432,19 +509,24 @@ export default function PropositionsPage() {
 
             {(() => {
               const schedule = (selectedProposition.horaires ||
-                selectedProposition.openingHours) as Record<string, string> | undefined
+                selectedProposition.openingHours) as
+                | Record<string, string>
+                | undefined;
               if (!schedule || Object.keys(schedule).length === 0) {
-                return null
+                return null;
               }
               const entries = Object.entries(schedule).filter(
-                ([, value]) => typeof value === 'string' && value.trim().length > 0
-              )
+                ([, value]) =>
+                  typeof value === "string" && value.trim().length > 0,
+              );
               if (entries.length === 0) {
-                return null
+                return null;
               }
               return (
                 <section className="space-y-2">
-                  <h3 className="text-lg font-semibold text-gray-800">Horaires d'ouverture</h3>
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    Horaires d'ouverture
+                  </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {entries.map(([day, hours]) => (
                       <div
@@ -459,23 +541,28 @@ export default function PropositionsPage() {
                     ))}
                   </div>
                 </section>
-              )
+              );
             })()}
 
             {(() => {
-              const equipments = selectedProposition.equipements || selectedProposition.equipments
+              const equipments =
+                selectedProposition.equipements ||
+                selectedProposition.equipments;
               if (!equipments || equipments.length === 0) {
-                return null
+                return null;
               }
               const filteredEquipments = equipments.filter(
-                (equipment) => typeof equipment === 'string' && equipment.trim().length > 0
-              )
+                (equipment) =>
+                  typeof equipment === "string" && equipment.trim().length > 0,
+              );
               if (filteredEquipments.length === 0) {
-                return null
+                return null;
               }
               return (
                 <section className="space-y-2">
-                  <h3 className="text-lg font-semibold text-gray-800">Équipements</h3>
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    Équipements
+                  </h3>
                   <div className="flex flex-wrap gap-2">
                     {filteredEquipments.map((equipment) => (
                       <span
@@ -487,42 +574,74 @@ export default function PropositionsPage() {
                     ))}
                   </div>
                 </section>
-              )
+              );
             })()}
 
             {(() => {
-              const photos =
-                (selectedProposition.photos && selectedProposition.photos.length > 0
-                  ? selectedProposition.photos
-                  : selectedProposition.images) || []
+              // Normaliser : photos / images, string ou { url }
+              const raw =
+                selectedProposition.photos || selectedProposition.images || [];
+              const urls = (Array.isArray(raw) ? raw : [])
+                .map((p) =>
+                  typeof p === "string"
+                    ? p
+                    : p && (p as { url?: string }).url
+                      ? (p as { url: string }).url
+                      : null,
+                )
+                .filter((u): u is string => Boolean(u));
 
-              if (!photos || photos.length === 0) {
-                return null
+              if (urls.length === 0) {
+                return (
+                  <section className="space-y-2">
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      Photos
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                      Aucune photo jointe à cette proposition.
+                    </p>
+                  </section>
+                );
               }
+
+              const placeholderSvg =
+                "data:image/svg+xml," +
+                encodeURIComponent(
+                  '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect fill="#f3f4f6" width="200" height="200"/><text x="100" y="105" text-anchor="middle" fill="#9ca3af" font-size="14" font-family="sans-serif">Image indisponible</text></svg>',
+                );
 
               return (
                 <section className="space-y-2">
-                  <h3 className="text-lg font-semibold text-gray-800">Photos</h3>
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    Photos
+                  </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {photos.map((photo, index) => (
-                      <div
-                        key={`${photo}-${index}`}
-                        className="relative w-full h-40 rounded-lg overflow-hidden bg-gray-100"
+                    {urls.map((url, index) => (
+                      <button
+                        key={`${url}-${index}`}
+                        type="button"
+                        onClick={() => setImageModalUrl(url)}
+                        className="block relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-gray-100 border border-gray-200 hover:ring-2 hover:ring-blue-300 transition-shadow"
+                        aria-label={`Ouvrir la photo ${index + 1}`}
                       >
                         <img
-                          src={photo}
-                          alt={`Photo ${index + 1} de ${selectedProposition.nom}`}
+                          src={url}
+                          alt={`Photo ${index + 1} — ${selectedProposition.nom}`}
                           className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = placeholderSvg;
+                          }}
                         />
-                      </div>
+                      </button>
                     ))}
                   </div>
                 </section>
-              )
+              );
             })()}
 
             <div className="flex justify-end">
-              {selectedProposition.statut === 'en_attente' ? (
+              {selectedProposition.statut === "en_attente" ? (
                 <div className="flex flex-wrap gap-3">
                   <button
                     onClick={() => handleApprove(selectedProposition.id)}
@@ -530,9 +649,10 @@ export default function PropositionsPage() {
                     className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-60 flex items-center gap-2"
                   >
                     <FiCheck />
-                    {processingAction?.id === selectedProposition.id && processingAction.type === 'approve'
-                      ? 'Approbation...'
-                      : 'Approuver'}
+                    {processingAction?.id === selectedProposition.id &&
+                    processingAction.type === "approve"
+                      ? "Approbation..."
+                      : "Approuver"}
                   </button>
                   <button
                     onClick={() => handleReject(selectedProposition.id)}
@@ -540,12 +660,13 @@ export default function PropositionsPage() {
                     className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-60 flex items-center gap-2"
                   >
                     <FiX />
-                    {processingAction?.id === selectedProposition.id && processingAction.type === 'reject'
-                      ? 'Rejet...'
-                      : 'Rejeter'}
+                    {processingAction?.id === selectedProposition.id &&
+                    processingAction.type === "reject"
+                      ? "Rejet..."
+                      : "Rejeter"}
                   </button>
                 </div>
-              ) : selectedProposition.statut === 'approuve' ? (
+              ) : selectedProposition.statut === "approuve" ? (
                 <div className="flex items-center gap-3">
                   <button
                     disabled
@@ -580,7 +701,32 @@ export default function PropositionsPage() {
           </div>
         </div>
       )}
-    </div>
-  )
-}
 
+      {imageModalUrl && (
+        <div
+          className="fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4"
+          onClick={() => setImageModalUrl(null)}
+        >
+          <div
+            className="relative max-w-5xl w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setImageModalUrl(null)}
+              className="absolute -top-3 -right-3 bg-white text-gray-700 rounded-full shadow p-2 hover:bg-gray-100"
+              aria-label="Fermer l'image"
+            >
+              <FiX className="w-5 h-5" />
+            </button>
+            <img
+              src={imageModalUrl}
+              alt="Photo agrandie"
+              className="w-full max-h-[85vh] object-contain rounded-lg bg-black"
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

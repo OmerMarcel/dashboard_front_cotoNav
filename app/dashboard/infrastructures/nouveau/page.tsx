@@ -524,7 +524,7 @@ export default function NouvelleInfrastructurePage() {
                 <span>Sélectionner des images</span>
               </label>
               <p className="text-xs text-gray-500 mt-2">
-                Maximum 10 images, 5MB par image. Formats acceptés: JPG, PNG, GIF, WebP
+                Maximum 10 images, 5MB par image. Tous formats image : JPG, PNG, GIF, WebP, BMP, HEIC, etc.
               </p>
             </div>
 

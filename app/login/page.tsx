@@ -1,41 +1,43 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { useAuth } from '@/contexts/AuthContext'
-import { FiMail, FiLock, FiLogIn, FiUser } from 'react-icons/fi'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import { FiMail, FiLock, FiLogIn, FiUser } from "react-icons/fi";
 
-type Role = 'super_admin' | 'admin' | 'agent_communal'
+type Role = "super_admin" | "admin" | "agent_communal";
 
 const ROLE_LABELS: Record<Role, string> = {
-  super_admin: 'Super Administrateur',
-  admin: 'Administrateur',
-  agent_communal: 'Agent Communal'
-}
+  super_admin: "Super Administrateur",
+  admin: "Administrateur",
+  agent_communal: "Agent Communal",
+};
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [role, setRole] = useState<Role>('admin')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const router = useRouter()
-  const { login } = useAuth()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState<Role>("admin");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
     try {
-      await login(email, password, role)
-      router.push('/dashboard')
+      await login(email, password, role);
+      const target =
+        role === "agent_communal" ? "/dashboard/infrastructures" : "/dashboard";
+      router.push(target);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Erreur de connexion')
+      setError(err.response?.data?.message || "Erreur de connexion");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100 px-4">
@@ -57,7 +59,10 @@ export default function LoginPage() {
           )}
 
           <div>
-            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="role"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Rôle
             </label>
             <div className="relative">
@@ -71,11 +76,23 @@ export default function LoginPage() {
               >
                 <option value="super_admin">{ROLE_LABELS.super_admin}</option>
                 <option value="admin">{ROLE_LABELS.admin}</option>
-                <option value="agent_communal">{ROLE_LABELS.agent_communal}</option>
+                <option value="agent_communal">
+                  {ROLE_LABELS.agent_communal}
+                </option>
               </select>
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none z-10">
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <svg
+                  className="w-5 h-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </div>
             </div>
@@ -85,7 +102,10 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Email
             </label>
             <div className="relative">
@@ -103,7 +123,10 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Mot de passe
             </label>
             <div className="relative">
@@ -137,6 +160,5 @@ export default function LoginPage() {
         </form>
       </div>
     </div>
-  )
+  );
 }
-

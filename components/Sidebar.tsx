@@ -39,15 +39,19 @@ const menuItems = [
 // Items de menu conditionnels selon le rôle
 const getRoleSpecificMenuItems = (userRole: string) => {
   const items = [];
-  
+
   // Super Admin et Admin peuvent voir la gestion des profils
-  if (userRole === 'super_admin' || userRole === 'admin') {
-    items.push({ href: "/dashboard/profils", label: "Gestion des Profils", icon: FiUsers });
+  if (userRole === "super_admin" || userRole === "admin") {
+    items.push({
+      href: "/dashboard/profils",
+      label: "Gestion des Profils",
+      icon: FiUsers,
+    });
   }
-  
+
   // Tous peuvent voir leur profil personnel
   items.push({ href: "/dashboard/profil", label: "Mon Profil", icon: FiUser });
-  
+
   return items;
 };
 
@@ -76,7 +80,9 @@ export default function Sidebar() {
           </div>
           <div>
             <h1 className="text-lg md:text-xl font-bold">CotoNav</h1>
-            <p className="text-xs md:text-sm text-gray-400 mt-1">Tableau de bord</p>
+            <p className="text-xs md:text-sm text-gray-400 mt-1">
+              Tableau de bord
+            </p>
           </div>
         </div>
       </div>
@@ -84,9 +90,13 @@ export default function Sidebar() {
       <nav className="flex-1 p-2 md:p-4 space-y-1 md:space-y-2 overflow-y-auto scrollbar-hide">
         {menuItems
           .filter((item) => {
-            // Masquer "Tableau de bord" et "Statistiques" pour les agents communaux
-            if (user?.role === 'agent_communal') {
-              return item.href !== '/dashboard' && item.href !== '/dashboard/statistiques';
+            // Masquer "Tableau de bord", "Statistiques" et "Utilisateurs" pour les agents communaux
+            if (user?.role === "agent_communal") {
+              return (
+                item.href !== "/dashboard" &&
+                item.href !== "/dashboard/statistiques" &&
+                item.href !== "/dashboard/utilisateurs"
+              );
             }
             return true;
           })
@@ -109,32 +119,33 @@ export default function Sidebar() {
               </Link>
             );
           })}
-        
+
         {/* Séparateur */}
-        {user && (user.role === 'super_admin' || user.role === 'admin') && (
+        {user && (user.role === "super_admin" || user.role === "admin") && (
           <div className="border-t border-gray-700 my-2"></div>
         )}
-        
-        {/* Items spécifiques au rôle */}
-        {user && getRoleSpecificMenuItems(user.role).map((item) => {
-          const Icon = item.icon;
-          const isActive = pathname === item.href;
 
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 rounded-lg transition-colors text-sm md:text-base ${
-                isActive
-                  ? "bg-[#96D0EE]/100 text-white"
-                  : "text-gray-300 hover:bg-gray-800 hover:text-white"
-              }`}
-            >
-              <Icon className="w-4 h-4 md:w-5 md:h-5" />
-              <span>{item.label}</span>
-            </Link>
-          );
-        })}
+        {/* Items spécifiques au rôle */}
+        {user &&
+          getRoleSpecificMenuItems(user.role).map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.href;
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 rounded-lg transition-colors text-sm md:text-base ${
+                  isActive
+                    ? "bg-[#96D0EE]/100 text-white"
+                    : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                }`}
+              >
+                <Icon className="w-4 h-4 md:w-5 md:h-5" />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
       </nav>
 
       <div className="p-2 md:p-4 border-t border-gray-800">

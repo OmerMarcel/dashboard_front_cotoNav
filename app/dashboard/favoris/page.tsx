@@ -82,7 +82,7 @@ export default function FavorisPage() {
           ...infra,
           id: infra.id || infra._id,
           _id: infra._id || infra.id,
-        })
+        }),
       );
 
       // Supprimer les doublons basés sur l'ID
@@ -93,7 +93,7 @@ export default function FavorisPage() {
             index ===
             self.findIndex((i: Infrastructure) => (i.id || i._id) === infraId)
           );
-        }
+        },
       );
 
       setFavorites(uniqueFavorites);
@@ -129,26 +129,26 @@ export default function FavorisPage() {
 
   const handleRemoveFavorite = async (id?: string) => {
     if (!id) return;
-  
+
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
-  
+
       await axios.delete(`${API_URL}/favorites/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       setFavorites((prev) =>
-        prev.filter((infra) => (infra.id || infra._id) !== id)
+        prev.filter((infra) => (infra.id || infra._id) !== id),
       );
     } catch (err) {
       console.error(err);
       setError("Impossible de retirer ce favori.");
     }
   };
-  
+
   const getTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
       toilettes_publiques: "Toilettes publiques",
@@ -177,7 +177,8 @@ export default function FavorisPage() {
             Retrouvez ici toutes les infrastructures ajoutées en favoris par
             tous les utilisateurs (application mobile et dashboard).
             <span className="text-xs text-gray-500 block mt-1">
-              ⚡ Mise à jour automatique toutes les 3 secondes • Total: {favorites.length} favori(s)
+              Mise à jour automatique toutes les 3 secondes • Total:{" "}
+              {favorites.length} favori(s)
             </span>
           </p>
         </div>
@@ -274,20 +275,13 @@ export default function FavorisPage() {
                                 year: "numeric",
                                 hour: "2-digit",
                                 minute: "2-digit",
-                              }
+                              },
                             )}
                           </span>
                         )}
                       </p>
                     )}
                   </div>
-                  <button
-                    onClick={() => handleRemoveFavorite(infraId)}
-                    className="text-red-500 hover:text-red-600 ml-2"
-                    title="Retirer des favoris"
-                  >
-                    <FiTrash2 className="w-5 h-5" />
-                  </button>
                 </div>
 
                 <p className="text-sm text-gray-500 flex items-start gap-2">
@@ -310,7 +304,7 @@ export default function FavorisPage() {
                   <span>{infra.etat || "État inconnu"}</span>
                   <span>
                     {((infra.noteMoyenne ?? infra.note_moyenne) || 0).toFixed(
-                      1
+                      1,
                     )}
                     /5
                     {` · ${(infra.nombreAvis ?? infra.nombre_avis) || 0} avis`}

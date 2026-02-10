@@ -2,21 +2,22 @@
 
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { FiUser, FiEdit, FiX, FiCheck } from 'react-icons/fi'
+import { FiUser, FiX, FiCheck, FiTrash2 } from 'react-icons/fi'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
 
 interface User {
-  _id: string
+  id?: string
+  _id?: string
   nom: string
   prenom: string
   email: string
   role: string
   actif: boolean
-  contributions: {
-    infrastructuresProposees: number
-    avisLaisses: number
-    signalements: number
+  contributions?: {
+    infrastructuresProposees?: number
+    avisLaisses?: number
+    signalements?: number
   }
 }
 
@@ -51,8 +52,9 @@ export default function UtilisateursPage() {
     try {
       await axios.patch(`${API_URL}/users/${id}/actif`, { actif: !currentStatus })
       fetchUsers()
-    } catch (error) {
-      console.error('Erreur:', error)
+    } catch (err: any) {
+      console.error('Erreur:', err)
+      alert(err.response?.data?.message || 'Erreur lors de la suspension / réactivation.')
     }
   }
 
@@ -60,8 +62,23 @@ export default function UtilisateursPage() {
     try {
       await axios.patch(`${API_URL}/users/${id}/role`, { role: newRole })
       fetchUsers()
-    } catch (error) {
-      console.error('Erreur:', error)
+    } catch (err: any) {
+      console.error('Erreur:', err)
+      alert(err.response?.data?.message || 'Erreur lors du changement de rôle.')
+    }
+  }
+
+  const handleDelete = async (user: User) => {
+    const id = user.id || user._id
+    if (!id) return
+    const name = [user.prenom, user.nom].filter(Boolean).join(' ') || user.email
+    if (!confirm(`Supprimer définitivement l'utilisateur "${name}" ? Cette action est irréversible.`)) return
+    try {
+      await axios.delete(`${API_URL}/users/${id}`)
+      fetchUsers()
+    } catch (err: any) {
+      console.error('Erreur:', err)
+      alert(err.response?.data?.message || 'Erreur lors de la suppression.')
     }
   }
 
@@ -85,8 +102,9 @@ export default function UtilisateursPage() {
         >
           <option value="">Tous les rôles</option>
           <option value="citoyen">Citoyen</option>
-          <option value="moderateur">Modérateur</option>
+          <option value="agent_communal">Agent communal</option>
           <option value="admin">Admin</option>
+          <option value="super_admin">Super Admin</option>
         </select>
 
         <select
@@ -115,12 +133,14 @@ export default function UtilisateursPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {users.map((user) => (
-                <tr key={user._id} className="hover:bg-gray-50">
+              {users.map((user) => {
+                const uid = user.id || user._id || ''
+                return (
+                <tr key={uid} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center text-white font-medium mr-3">
-                        {user.prenom.charAt(0)}{user.nom.charAt(0)}
+                        {(user.prenom || '').charAt(0)}{(user.nom || '').charAt(0)}
                       </div>
                       <div>
                         <div className="text-sm font-medium text-gray-900">
@@ -135,19 +155,20 @@ export default function UtilisateursPage() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <select
                       value={user.role}
-                      onChange={(e) => handleChangeRole(user._id, e.target.value)}
+                      onChange={(e) => handleChangeRole(uid, e.target.value)}
                       className="text-sm border border-gray-300 rounded px-2 py-1"
                     >
                       <option value="citoyen">Citoyen</option>
-                      <option value="moderateur">Modérateur</option>
+                      <option value="agent_communal">Agent communal</option>
                       <option value="admin">Admin</option>
+                      <option value="super_admin">Super Admin</option>
                     </select>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <div className="text-xs">
-                      {user.contributions.infrastructuresProposees} propositions,{' '}
-                      {user.contributions.avisLaisses} avis,{' '}
-                      {user.contributions.signalements} signalements
+                      {user.contributions?.infrastructuresProposees ?? 0} propositions,{' '}
+                      {user.contributions?.avisLaisses ?? 0} avis,{' '}
+                      {user.contributions?.signalements ?? 0} signalements
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -157,24 +178,35 @@ export default function UtilisateursPage() {
                       </span>
                     ) : (
                       <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">
-                        Inactif
+                        Suspendu
                       </span>
                     )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button
-                      onClick={() => handleToggleActive(user._id, user.actif)}
-                      className={`${
-                        user.actif
-                          ? 'text-red-600 hover:text-red-900'
-                          : 'text-green-600 hover:text-green-900'
-                      }`}
-                    >
-                      {user.actif ? <FiX className="w-5 h-5" /> : <FiCheck className="w-5 h-5" />}
-                    </button>
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        onClick={() => handleToggleActive(uid, user.actif)}
+                        title={user.actif ? 'Suspendre' : 'Réactiver'}
+                        className={`inline-flex items-center gap-1 px-2 py-1 rounded ${
+                          user.actif
+                            ? 'text-amber-600 hover:bg-amber-50'
+                            : 'text-green-600 hover:bg-green-50'
+                        }`}
+                      >
+                        {user.actif ? <><FiX className="w-4 h-4" /> <span className="text-xs">Suspendre</span></> : <><FiCheck className="w-4 h-4" /> <span className="text-xs">Réactiver</span></>}
+                      </button>
+                      <button
+                        onClick={() => handleDelete(user)}
+                        title="Supprimer"
+                        className="inline-flex items-center gap-1 px-2 py-1 rounded text-red-600 hover:bg-red-50"
+                      >
+                        <FiTrash2 className="w-4 h-4" /> <span className="text-xs">Supprimer</span>
+                      </button>
+                    </div>
                   </td>
                 </tr>
-              ))}
+                )
+              })}
             </tbody>
           </table>
         </div>
