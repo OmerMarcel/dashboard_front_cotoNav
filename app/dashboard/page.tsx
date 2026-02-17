@@ -1,103 +1,110 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import axios from 'axios'
-import { 
-  FiMapPin, 
-  FiCheckCircle, 
-  FiClock, 
-  FiUsers, 
+import { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  FiMapPin,
+  FiCheckCircle,
+  FiClock,
+  FiUsers,
   FiAlertCircle,
   FiMessageSquare,
-  FiHeart
-} from 'react-icons/fi'
-import StatCard from '@/components/StatCard'
-import Chart from '@/components/Chart'
+  FiHeart,
+} from "react-icons/fi";
+import StatCard from "@/components/StatCard";
+import Chart from "@/components/Chart";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
 interface Statistics {
   general: {
-    totalInfrastructures: number
-    infrastructuresValidees: number
-    infrastructuresEnAttente: number
-    totalPropositions: number
-    propositionsEnAttente: number
-    totalSignalements: number
-    signalementsNouveaux: number
-    totalUsers: number
-    totalAvis: number
-    totalFavoris: number
-  }
-  parType: Array<{ _id: string; count: number }>
-  parQuartier: Array<{ _id: string; count: number }>
-  parEtat: Array<{ _id: string; count: number }>
-  evolution: Array<{ _id: { year: number; month: number }; count: number }>
+    totalInfrastructures: number;
+    infrastructuresValidees: number;
+    infrastructuresEnAttente: number;
+    totalPropositions: number;
+    propositionsEnAttente: number;
+    totalSignalements: number;
+    signalementsNouveaux: number;
+    totalUsers: number;
+    totalAvis: number;
+    totalFavoris: number;
+  };
+  parType: Array<{ _id: string; count: number }>;
+  parQuartier: Array<{ _id: string; count: number }>;
+  parDepartement: Array<{ _id: string; count: number }>;
+  parEtat: Array<{ _id: string; count: number }>;
+  evolution: Array<{ _id: { year: number; month: number }; count: number }>;
   topInfrastructures: Array<{
-    _id: string
-    nom: string
-    type: string
-    noteMoyenne: number
-    nombreAvis: number
-  }>
+    _id: string;
+    nom: string;
+    type: string;
+    noteMoyenne: number;
+    nombreAvis: number;
+  }>;
 }
 
 export default function DashboardPage() {
-  const [stats, setStats] = useState<Statistics | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState<Statistics | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchStatistics = async (silent = false) => {
     try {
-      const token = localStorage.getItem('token')
+      const token = localStorage.getItem("token");
       const response = await axios.get(`${API_URL}/statistics`, {
         headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-      setStats(response.data)
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setStats(response.data);
     } catch (error) {
       if (!silent) {
-        console.error('Erreur lors du chargement des statistiques:', error)
+        console.error("Erreur lors du chargement des statistiques:", error);
       }
     } finally {
       if (!silent) {
-        setLoading(false)
+        setLoading(false);
       }
     }
-  }
+  };
 
   useEffect(() => {
     // Chargement initial
-    fetchStatistics()
+    fetchStatistics();
 
     // Mise à jour en temps réel toutes les 3 secondes
     const interval = setInterval(() => {
-      fetchStatistics(true) // Mode silencieux pour les mises à jour automatiques
-    }, 3000) // 3 secondes
+      fetchStatistics(true); // Mode silencieux pour les mises à jour automatiques
+    }, 3000); // 3 secondes
 
     // Nettoyage de l'intervalle lors du démontage du composant
     return () => {
-      clearInterval(interval)
-    }
-  }, [])
+      clearInterval(interval);
+    };
+  }, []);
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
       </div>
-    )
+    );
   }
 
   if (!stats) {
-    return <div className="text-center text-gray-500">Erreur de chargement des données</div>
+    return (
+      <div className="text-center text-gray-500">
+        Erreur de chargement des données
+      </div>
+    );
   }
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Tableau de Bord</h1>
-        <p className="text-gray-600 mt-1">Vue d'ensemble des infrastructures publiques</p>
+        <p className="text-gray-600 mt-1">
+          Vue d'ensemble des infrastructures publiques
+        </p>
       </div>
 
       {/* Cartes de statistiques */}
@@ -155,10 +162,10 @@ export default function DashboardPage() {
 
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Top 10 Quartiers
+            Infrastructures par Département
           </h2>
           <Chart
-            data={stats.parQuartier}
+            data={stats.parDepartement}
             type="bar"
             dataKey="count"
             nameKey="_id"
@@ -215,6 +222,5 @@ export default function DashboardPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
-

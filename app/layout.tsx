@@ -1,19 +1,20 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import './globals.css'
-import { Providers } from './providers'
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { Providers } from "./providers";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Tableau de Bord - Géolocalisation Infrastructures Publiques',
-  description: 'Tableau de bord administratif pour la gestion des infrastructures publiques au Bénin',
-}
+  title: "KutonouTché - Tableau de Bord",
+  description:
+    "Tableau de bord administratif KutonouTché pour la gestion des infrastructures publiques au Bénin",
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="fr">
@@ -21,6 +22,5 @@ export default function RootLayout({
         <Providers>{children}</Providers>
       </body>
     </html>
-  )
+  );
 }
-

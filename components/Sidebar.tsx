@@ -8,6 +8,7 @@ import {
   FiMapPin,
   FiClock,
   FiAlertCircle,
+  FiMessageSquare,
   FiUsers,
   FiBarChart2,
   FiSettings,
@@ -32,6 +33,7 @@ const menuItems = [
     label: "Signalements",
     icon: FiAlertCircle,
   },
+  { href: "/dashboard/avis", label: "Avis", icon: FiMessageSquare },
   { href: "/dashboard/utilisateurs", label: "Utilisateurs", icon: FiUsers },
   { href: "/dashboard/statistiques", label: "Statistiques", icon: FiBarChart2 },
 ];
@@ -72,14 +74,14 @@ export default function Sidebar() {
           <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0">
             <Image
               src="/images/logo1.png"
-              alt="CotoNav Logo"
+              alt="KutonouTché Logo"
               fill
               className="object-contain"
               priority
             />
           </div>
           <div>
-            <h1 className="text-lg md:text-xl font-bold">CotoNav</h1>
+            <h1 className="text-lg md:text-xl font-bold">KutonouTché</h1>
             <p className="text-xs md:text-sm text-gray-400 mt-1">
               Tableau de bord
             </p>
