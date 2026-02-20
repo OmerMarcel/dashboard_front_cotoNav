@@ -440,15 +440,109 @@ export default function EditInfrastructurePage() {
               disabled={fieldDisabled}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             >
-              <option value="toilettes_publiques">Toilettes publiques</option>
-              <option value="parc_jeux">Parc de jeux</option>
-              <option value="centre_sante">Centre de santé</option>
-              <option value="installation_sportive">
-                Installation sportive
-              </option>
-              <option value="espace_divertissement">
-                Espace de divertissement
-              </option>
+              {/* Services Administratifs */}
+              <optgroup label="Services Administratifs">
+                <option value="mairie">Mairie</option>
+                <option value="prefecture">Préfecture</option>
+                <option value="tribunal">Tribunal</option>
+                <option value="gendarmerie">Gendarmerie</option>
+                <option value="police">Police</option>
+              </optgroup>
+
+              {/* Services Éducatifs */}
+              <optgroup label="Services Éducatifs">
+                <option value="ecole_primaire">École primaire</option>
+                <option value="ecole_secondaire">École secondaire</option>
+                <option value="universite">Université</option>
+                <option value="centre_formation">Centre de formation</option>
+                <option value="bibliotheque">Bibliothèque</option>
+              </optgroup>
+
+              {/* Services de Santé */}
+              <optgroup label="Services de Santé">
+                <option value="hopital">Hôpital</option>
+                <option value="centre_sante">Centre de santé</option>
+                <option value="clinique">Clinique</option>
+                <option value="pharmacie">Pharmacie</option>
+                <option value="laboratoire">Laboratoire</option>
+              </optgroup>
+
+              {/* Services Religieux */}
+              <optgroup label="Services Religieux">
+                <option value="eglise">Église</option>
+                <option value="mosquee">Mosquée</option>
+                <option value="synagogue">Synagogue</option>
+                <option value="temple">Temple</option>
+              </optgroup>
+
+              {/* Installations Sportives et Récréatives */}
+              <optgroup label="Installations Sportives et Récréatives">
+                <option value="installation_sportive">
+                  Installation sportive
+                </option>
+                <option value="parc_jeux">Parc de jeux</option>
+                <option value="terrain_football">Terrain de football</option>
+                <option value="terrain_tennis">Terrain de tennis</option>
+                <option value="piscine">Piscine</option>
+                <option value="gymnase">Gymnase</option>
+                <option value="stade">Stade</option>
+                <option value="parc_loisirs">Parc de loisirs</option>
+              </optgroup>
+
+              {/* Sanitaires et Hygiène */}
+              <optgroup label="Sanitaires et Hygiène">
+                <option value="toilettes_publiques">Toilettes publiques</option>
+                <option value="point_eau">Point d'eau</option>
+                <option value="douche_publique">Douche publique</option>
+              </optgroup>
+
+              {/* Commerces et Services */}
+              <optgroup label="Commerces et Services">
+                <option value="marche">Marché</option>
+                <option value="supermarche">Supermarché</option>
+                <option value="restaurant">Restaurant</option>
+                <option value="hotel">Hôtel</option>
+                <option value="banque">Banque</option>
+                <option value="agence_voyage">Agence de voyage</option>
+                <option value="coiffeur">Coiffeur</option>
+                <option value="salon_beaute">Salon de beauté</option>
+              </optgroup>
+
+              {/* Transports et Stationnement */}
+              <optgroup label="Transports et Stationnement">
+                <option value="gare_routiere">Gare routière</option>
+                <option value="gare_ferroviaire">Gare ferroviaire</option>
+                <option value="aeroport">Aéroport</option>
+                <option value="port">Port</option>
+                <option value="parking">Parking</option>
+                <option value="station_taxi">Station de taxi</option>
+              </optgroup>
+
+              {/* Espace de Divertissement et Culture */}
+              <optgroup label="Espace de Divertissement et Culture">
+                <option value="espace_divertissement">
+                  Espace de divertissement
+                </option>
+                <option value="cinema">Cinéma</option>
+                <option value="theatre">Théâtre</option>
+                <option value="musee">Musée</option>
+                <option value="galerie_art">Galerie d'art</option>
+                <option value="salle_concert">Salle de concert</option>
+              </optgroup>
+
+              {/* Services Sociaux et Communautaires */}
+              <optgroup label="Services Sociaux et Communautaires">
+                <option value="centre_social">Centre social</option>
+                <option value="orphelinat">Orphelinat</option>
+                <option value="foyer_personnes_agees">
+                  Foyer pour personnes âgées
+                </option>
+                <option value="centre_aide_handicapes">
+                  Centre d'aide aux handicapés
+                </option>
+              </optgroup>
+
+              {/* Autres */}
               <option value="autre">Autre</option>
             </select>
           </div>
