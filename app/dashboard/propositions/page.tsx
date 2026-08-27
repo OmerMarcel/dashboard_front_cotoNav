@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
+import LogoLoader from "@/components/LogoLoader";
 import {
   FiClock,
   FiCheck,
@@ -230,23 +231,27 @@ export default function PropositionsPage() {
   };
 
   if (loading) {
-    return <div className="text-center py-12">Chargement...</div>;
+    return (
+      <div className="flex items-center justify-center py-24">
+        <LogoLoader size="lg" text="Chargement des propositions..." />
+      </div>
+    );
   }
 
   return (
     <div className="space-y-6">
       {recentInfrastructure && (
-        <div className="bg-green-50 border-2 border-green-300 rounded-lg p-4 flex flex-col gap-3 shadow-lg transition-all duration-300">
+        <div className="bg-green-50 dark:bg-green-950/40 border-2 border-green-300 dark:border-green-800 rounded-2xl p-4 flex flex-col gap-3 shadow-lg transition-all duration-300">
           <div className="flex justify-between items-start">
             <div className="flex items-start gap-3">
               <div className="mt-1">
-                <FiCheck className="w-6 h-6 text-green-600" />
+                <FiCheck className="w-6 h-6 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <p className="text-green-800 font-semibold text-lg">
+                <p className="text-green-800 dark:text-green-300 font-semibold text-lg">
                   ✅ Proposition approuvée avec succès
                 </p>
-                <p className="text-green-700 text-sm mt-1">
+                <p className="text-green-700 dark:text-green-400 text-sm mt-1">
                   L'infrastructure{" "}
                   <strong>
                     {recentInfrastructure.nom || "Une infrastructure"}
@@ -258,7 +263,7 @@ export default function PropositionsPage() {
             </div>
             <button
               onClick={() => setRecentInfrastructure(null)}
-              className="text-green-700 hover:text-green-900 p-1 rounded hover:bg-green-100"
+              className="text-green-700 dark:text-green-400 hover:text-green-900 dark:hover:text-green-200 p-1 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/40"
               aria-label="Fermer"
             >
               <FiX className="w-5 h-5" />
@@ -267,7 +272,7 @@ export default function PropositionsPage() {
           <div className="flex gap-2">
             <Link
               href="/dashboard/infrastructures"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-white text-green-700 text-sm font-medium rounded-lg border border-green-300 hover:bg-green-50 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 text-green-700 dark:text-green-300 text-sm font-medium rounded-xl border border-green-300 dark:border-green-800 hover:bg-green-50 dark:hover:bg-slate-700 transition-colors"
             >
               <FiEye />
               Toutes les infrastructures
@@ -277,18 +282,18 @@ export default function PropositionsPage() {
       )}
 
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Propositions</h1>
-        <p className="text-gray-600 mt-1">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Propositions</h1>
+        <p className="text-gray-600 dark:text-slate-400 mt-1">
           Modérer les propositions d'infrastructures
         </p>
       </div>
 
       {/* Filtre */}
-      <div className="bg-white rounded-lg shadow p-4">
+      <div className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/70 p-4">
         <select
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-2"
+          className="border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-slate-100 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#96D0EE]"
         >
           <option value="">Tous les statuts</option>
           <option value="en_attente">En attente</option>
@@ -300,23 +305,23 @@ export default function PropositionsPage() {
       {/* Liste */}
       <div className="space-y-4">
         {propositions.map((prop) => (
-          <div key={prop.id} className="bg-white rounded-lg shadow p-6">
+          <div key={prop.id} className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/70 p-6 transition-all hover:shadow-md">
             <div className="flex justify-between items-start">
               <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <h3 className="text-lg font-semibold text-gray-900">
+                <div className="flex items-center gap-3 mb-2 flex-wrap">
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">
                     {prop.nom}
                   </h3>
-                  <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                  <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-100 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300">
                     {getTypeLabel(prop.type)}
                   </span>
                   <span
-                    className={`px-2 py-1 text-xs font-medium rounded-full ${
+                    className={`px-2.5 py-1 text-xs font-medium rounded-full ${
                       prop.statut === "en_attente"
-                        ? "bg-yellow-100 text-yellow-800"
+                        ? "bg-yellow-100 dark:bg-yellow-950/50 text-yellow-800 dark:text-yellow-300"
                         : prop.statut === "approuve"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
+                          ? "bg-green-100 dark:bg-green-950/50 text-green-800 dark:text-green-300"
+                          : "bg-red-100 dark:bg-red-950/50 text-red-800 dark:text-red-300"
                     }`}
                   >
                     {prop.statut === "en_attente"
@@ -326,14 +331,14 @@ export default function PropositionsPage() {
                         : "Rejetée"}
                   </span>
                 </div>
-                <p className="text-sm text-gray-600 mb-2">
-                  <FiClock className="inline mr-1" />
+                <p className="text-sm text-gray-600 dark:text-slate-300 mb-2 flex items-center">
+                  <FiClock className="inline mr-1 text-primary-500" />
                   {prop.localisation?.adresse ?? "Adresse inconnue"}
                   {prop.localisation?.quartier
                     ? `, ${prop.localisation?.quartier}`
                     : ""}
                 </p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-slate-400">
                   {(() => {
                     const proposer = prop.propose_par;
                     const nameParts =
@@ -353,7 +358,7 @@ export default function PropositionsPage() {
                     return `Proposé par ${displayName} (${email})`;
                   })()}
                 </p>
-                <p className="text-xs text-gray-400 mt-2">
+                <p className="text-xs text-gray-400 dark:text-slate-500 mt-2">
                   {(() => {
                     const createdOn = prop.createdAt || prop.created_at;
                     if (!createdOn) {
@@ -369,7 +374,7 @@ export default function PropositionsPage() {
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => openDetails(prop)}
-                  className="px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 flex items-center gap-2"
+                  className="px-4 py-2 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors flex items-center gap-2 text-sm font-medium"
                 >
                   <FiEye /> Voir les détails
                 </button>
@@ -378,7 +383,7 @@ export default function PropositionsPage() {
                     <button
                       onClick={() => handleApprove(prop.id)}
                       disabled={processingAction?.id === prop.id}
-                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-60 flex items-center gap-2"
+                      className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl disabled:opacity-60 flex items-center gap-2 text-sm font-medium shadow-sm transition"
                     >
                       <FiCheck />
                       {processingAction?.id === prop.id &&
@@ -389,7 +394,7 @@ export default function PropositionsPage() {
                     <button
                       onClick={() => handleReject(prop.id)}
                       disabled={processingAction?.id === prop.id}
-                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-60 flex items-center gap-2"
+                      className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl disabled:opacity-60 flex items-center gap-2 text-sm font-medium shadow-sm transition"
                     >
                       <FiX />
                       {processingAction?.id === prop.id &&
@@ -401,14 +406,14 @@ export default function PropositionsPage() {
                 ) : prop.statut === "approuve" ? (
                   <button
                     disabled
-                    className="px-4 py-2 bg-green-100 text-green-700 rounded-lg flex items-center gap-2 cursor-default"
+                    className="px-4 py-2 bg-green-100 dark:bg-green-950/40 text-green-700 dark:text-green-300 rounded-xl flex items-center gap-2 cursor-default text-sm font-medium"
                   >
                     <FiCheck /> Déjà approuvée
                   </button>
                 ) : (
                   <button
                     disabled
-                    className="px-4 py-2 bg-gray-200 text-gray-600 rounded-lg flex items-center gap-2 cursor-default"
+                    className="px-4 py-2 bg-gray-200 dark:bg-slate-700 text-gray-600 dark:text-slate-400 rounded-xl flex items-center gap-2 cursor-default text-sm font-medium"
                   >
                     <FiX /> Rejetée
                   </button>
@@ -420,56 +425,56 @@ export default function PropositionsPage() {
       </div>
 
       {detailModalOpen && selectedProposition && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center px-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-4">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center px-4">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-4 border border-gray-100 dark:border-slate-800">
             <div className="flex justify-between items-start">
               <div>
-                <h2 className="text-2xl font-semibold text-gray-900">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                   {selectedProposition.nom}
                 </h2>
-                <p className="text-gray-500 text-sm">
+                <p className="text-gray-500 dark:text-slate-400 text-sm mt-0.5">
                   {getTypeLabel(selectedProposition.type)} • Statut :{" "}
-                  <span className="font-medium">
+                  <span className="font-semibold text-gray-700 dark:text-slate-200">
                     {selectedProposition.statut}
                   </span>
                 </p>
               </div>
               <button
                 onClick={closeDetails}
-                className="p-2 rounded-lg text-gray-500 hover:bg-gray-100"
+                className="p-2 rounded-xl text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-800 transition"
                 aria-label="Fermer"
               >
-                <FiXCircle className="w-5 h-5" />
+                <FiXCircle className="w-6 h-6" />
               </button>
             </div>
 
             <section className="space-y-2">
-              <h3 className="text-lg font-semibold text-gray-800">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-slate-100">
                 Description
               </h3>
-              <p className="text-gray-600 whitespace-pre-line">
+              <p className="text-gray-600 dark:text-slate-300 whitespace-pre-line text-sm">
                 {selectedProposition.description ||
                   "Aucune description fournie."}
               </p>
             </section>
 
             <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-                <h4 className="text-sm font-semibold text-gray-700 uppercase">
+              <div className="bg-gray-50 dark:bg-slate-800/60 rounded-2xl p-4 space-y-2 border border-gray-100 dark:border-slate-700/60">
+                <h4 className="text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
                   Localisation
                 </h4>
-                <p className="text-sm text-gray-600 flex items-center gap-2">
-                  <FiMapPin className="text-primary-500" />
+                <p className="text-sm text-gray-600 dark:text-slate-300 flex items-center gap-2">
+                  <FiMapPin className="text-primary-500 flex-shrink-0" />
                   {selectedProposition.localisation?.adresse ||
                     "Adresse inconnue"}
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-slate-300">
                   Quartier : {selectedProposition.localisation?.quartier || "—"}
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-slate-300">
                   Commune : {selectedProposition.localisation?.commune || "—"}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-slate-400">
                   Coordonnées : lat{" "}
                   {formatCoordinate(
                     selectedProposition.localisation?.coordinates?.[1],
@@ -481,22 +486,22 @@ export default function PropositionsPage() {
                 </p>
               </div>
 
-              <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-                <h4 className="text-sm font-semibold text-gray-700 uppercase">
+              <div className="bg-gray-50 dark:bg-slate-800/60 rounded-2xl p-4 space-y-2 border border-gray-100 dark:border-slate-700/60">
+                <h4 className="text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
                   Contact
                 </h4>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-slate-300">
                   Téléphone :{" "}
                   {selectedProposition.contact?.telephone || "Non fourni"}
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-slate-300">
                   Site web :{" "}
                   {selectedProposition.contact?.website ? (
                     <a
                       href={selectedProposition.contact.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-primary-600 hover:underline"
+                      className="text-primary-600 dark:text-primary-400 hover:underline"
                     >
                       {selectedProposition.contact.website}
                     </a>
@@ -524,14 +529,14 @@ export default function PropositionsPage() {
               }
               return (
                 <section className="space-y-2">
-                  <h3 className="text-lg font-semibold text-gray-800">
+                  <h3 className="text-lg font-semibold text-gray-800 dark:text-slate-100">
                     Horaires d'ouverture
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {entries.map(([day, hours]) => (
                       <div
                         key={day}
-                        className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-2 text-sm text-gray-700"
+                        className="flex items-center justify-between bg-gray-50 dark:bg-slate-800/60 rounded-xl px-4 py-2 text-sm text-gray-700 dark:text-slate-200 border border-gray-100 dark:border-slate-700/50"
                       >
                         <span className="font-medium">
                           {day.charAt(0).toUpperCase() + day.slice(1)}
@@ -560,14 +565,14 @@ export default function PropositionsPage() {
               }
               return (
                 <section className="space-y-2">
-                  <h3 className="text-lg font-semibold text-gray-800">
+                  <h3 className="text-lg font-semibold text-gray-800 dark:text-slate-100">
                     Équipements
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {filteredEquipments.map((equipment) => (
                       <span
                         key={equipment}
-                        className="px-3 py-1 text-sm rounded-full bg-primary-50 text-primary-700"
+                        className="px-3 py-1 text-sm rounded-full bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 font-medium"
                       >
                         {equipment}
                       </span>
@@ -594,10 +599,10 @@ export default function PropositionsPage() {
               if (urls.length === 0) {
                 return (
                   <section className="space-y-2">
-                    <h3 className="text-lg font-semibold text-gray-800">
+                    <h3 className="text-lg font-semibold text-gray-800 dark:text-slate-100">
                       Photos
                     </h3>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-500 dark:text-slate-400">
                       Aucune photo jointe à cette proposition.
                     </p>
                   </section>
@@ -607,12 +612,12 @@ export default function PropositionsPage() {
               const placeholderSvg =
                 "data:image/svg+xml," +
                 encodeURIComponent(
-                  '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect fill="#f3f4f6" width="200" height="200"/><text x="100" y="105" text-anchor="middle" fill="#9ca3af" font-size="14" font-family="sans-serif">Image indisponible</text></svg>',
+                  '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect fill="#1e293b" width="200" height="200"/><text x="100" y="105" text-anchor="middle" fill="#64748b" font-size="14" font-family="sans-serif">Image indisponible</text></svg>',
                 );
 
               return (
                 <section className="space-y-2">
-                  <h3 className="text-lg font-semibold text-gray-800">
+                  <h3 className="text-lg font-semibold text-gray-800 dark:text-slate-100">
                     Photos
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -621,7 +626,7 @@ export default function PropositionsPage() {
                         key={`${url}-${index}`}
                         type="button"
                         onClick={() => setImageModalUrl(url)}
-                        className="block relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-gray-100 border border-gray-200 hover:ring-2 hover:ring-blue-300 transition-shadow"
+                        className="block relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:ring-2 hover:ring-blue-300 transition-shadow"
                         aria-label={`Ouvrir la photo ${index + 1}`}
                       >
                         <img
@@ -640,13 +645,13 @@ export default function PropositionsPage() {
               );
             })()}
 
-            <div className="flex justify-end">
+            <div className="flex justify-end pt-2 border-t border-gray-100 dark:border-slate-800">
               {selectedProposition.statut === "en_attente" ? (
                 <div className="flex flex-wrap gap-3">
                   <button
                     onClick={() => handleApprove(selectedProposition.id)}
                     disabled={processingAction?.id === selectedProposition.id}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-60 flex items-center gap-2"
+                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl disabled:opacity-60 flex items-center gap-2 text-sm font-medium shadow-sm transition"
                   >
                     <FiCheck />
                     {processingAction?.id === selectedProposition.id &&
@@ -657,7 +662,7 @@ export default function PropositionsPage() {
                   <button
                     onClick={() => handleReject(selectedProposition.id)}
                     disabled={processingAction?.id === selectedProposition.id}
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-60 flex items-center gap-2"
+                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl disabled:opacity-60 flex items-center gap-2 text-sm font-medium shadow-sm transition"
                   >
                     <FiX />
                     {processingAction?.id === selectedProposition.id &&
@@ -670,13 +675,13 @@ export default function PropositionsPage() {
                 <div className="flex items-center gap-3">
                   <button
                     disabled
-                    className="px-4 py-2 bg-green-100 text-green-700 rounded-lg flex items-center gap-2 cursor-default"
+                    className="px-4 py-2 bg-green-100 dark:bg-green-950/40 text-green-700 dark:text-green-300 rounded-xl flex items-center gap-2 cursor-default text-sm font-medium"
                   >
                     <FiCheck /> Déjà approuvée
                   </button>
                   <button
                     onClick={closeDetails}
-                    className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300"
+                    className="px-4 py-2 bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-200 rounded-xl hover:bg-gray-200 dark:hover:bg-slate-700 text-sm font-medium transition"
                   >
                     Fermer
                   </button>
@@ -685,13 +690,13 @@ export default function PropositionsPage() {
                 <div className="flex items-center gap-3">
                   <button
                     disabled
-                    className="px-4 py-2 bg-gray-200 text-gray-600 rounded-lg flex items-center gap-2 cursor-default"
+                    className="px-4 py-2 bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-slate-400 rounded-xl flex items-center gap-2 cursor-default text-sm font-medium"
                   >
                     <FiX /> Rejetée
                   </button>
                   <button
                     onClick={closeDetails}
-                    className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300"
+                    className="px-4 py-2 bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-200 rounded-xl hover:bg-gray-200 dark:hover:bg-slate-700 text-sm font-medium transition"
                   >
                     Fermer
                   </button>
@@ -704,7 +709,7 @@ export default function PropositionsPage() {
 
       {imageModalUrl && (
         <div
-          className="fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4"
+          className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={() => setImageModalUrl(null)}
         >
           <div
@@ -714,7 +719,7 @@ export default function PropositionsPage() {
             <button
               type="button"
               onClick={() => setImageModalUrl(null)}
-              className="absolute -top-3 -right-3 bg-white text-gray-700 rounded-full shadow p-2 hover:bg-gray-100"
+              className="absolute -top-3 -right-3 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 rounded-full shadow-lg p-2 hover:bg-gray-100 dark:hover:bg-slate-700"
               aria-label="Fermer l'image"
             >
               <FiX className="w-5 h-5" />
@@ -722,7 +727,7 @@ export default function PropositionsPage() {
             <img
               src={imageModalUrl}
               alt="Photo agrandie"
-              className="w-full max-h-[85vh] object-contain rounded-lg bg-black"
+              className="w-full max-h-[85vh] object-contain rounded-2xl bg-black"
             />
           </div>
         </div>

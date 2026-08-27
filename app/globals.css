@@ -1,29 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 15, 23, 42; /* slate-900 */
+  --background-start-rgb: 248, 250, 252; /* slate-50 */
+  --background-end-rgb: 248, 250, 252;
+  
+  --brand-dark: #004B70;
+  --brand-light: #96D0EE;
+  color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+/* ── Mode Nuit ───────────────────────────────────────────────────────────────── */
+.dark {
+  --foreground-rgb: 226, 232, 240;     /* slate-200  – texte principal clair */
+  --background-start-rgb: 10, 15, 26;  /* quasi noir bleuté */
+  --background-end-rgb: 10, 15, 26;
+
+  --brand-dark: #1a6e9e;               /* brand-dark éclairci pour dark mode */
+  --brand-light: #96D0EE;
+  
+  color-scheme: dark;
+}
+
+/* Global dark-mode helpers for dashboard forms & containers */
+.dark input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]),
+.dark textarea,
+.dark select {
+  background-color: #1e293b;
+  border-color: #334155;
+  color: #f1f5f9;
+}
+
+.dark input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]):focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: #96D0EE;
+  outline: none;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #64748b;
+}
+
+.dark option,
+.dark optgroup {
+  background-color: #0f172a;
+  color: #f1f5f9;
+}
+
+/* Dark mode native date/time pickers */
+.dark input[type="time"]::-webkit-calendar-picker-indicator,
+.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8) brightness(1.2);
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: rgb(var(--background-start-rgb));
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+@layer components {
+  /* Buttons */
+  .btn-primary {
+    @apply bg-[#004B70] text-white font-medium py-2.5 px-4 rounded-xl shadow-sm hover:bg-[#003855] hover:shadow-md transition-all duration-200 flex items-center justify-center gap-2;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-gray-700 border border-gray-200 font-medium py-2.5 px-4 rounded-xl hover:bg-gray-50 hover:text-gray-900 hover:border-gray-300 transition-all duration-200 flex items-center justify-center gap-2;
+    @apply dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-700 dark:hover:text-white dark:hover:border-slate-600;
+  }
+  
+  .btn-danger {
+    @apply bg-red-50 text-red-600 font-medium py-2.5 px-4 rounded-xl hover:bg-red-100 hover:text-red-700 transition-all duration-200 flex items-center justify-center gap-2;
+    @apply dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30 dark:hover:text-red-300;
+  }
+
+  .btn-ghost {
+    @apply text-gray-600 font-medium py-2 px-3 rounded-lg hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 flex items-center justify-center gap-2;
+    @apply dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100;
+  }
+
+  /* Inputs */
+  .input-field {
+    @apply w-full border border-gray-200 bg-gray-50/50 rounded-xl px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#96D0EE] focus:border-[#96D0EE] focus:bg-white transition-all duration-200;
+    @apply dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:bg-slate-800;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-white rounded-2xl shadow-sm border border-gray-100/80 p-6;
+    @apply dark:bg-slate-800/80 dark:border-slate-700/60;
+  }
 }
 
 @layer utilities {
@@ -31,14 +105,24 @@ body {
     text-wrap: balance;
   }
   
-  /* Masquer la barre de défilement tout en conservant la fonctionnalité de défilement */
   .scrollbar-hide {
-    -ms-overflow-style: none; /* IE et Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
   
   .scrollbar-hide::-webkit-scrollbar {
-    display: none; /* Chrome, Safari et Opera */
+    display: none;
+  }
+  
+  /* Custom scrollbar for larger areas */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-slate-700 rounded-full hover:bg-gray-400 dark:hover:bg-slate-600 transition-colors;
   }
 }
-

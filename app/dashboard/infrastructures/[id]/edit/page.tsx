@@ -5,6 +5,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { FiArrowLeft, FiSave, FiMapPin, FiImage, FiX } from "react-icons/fi";
 import Link from "next/link";
+import LogoLoader from "@/components/LogoLoader";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
@@ -359,10 +360,7 @@ export default function EditInfrastructurePage() {
   if (loadingData) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Chargement...</p>
-        </div>
+        <LogoLoader size="xl" text="Chargement de l'infrastructure..." />
       </div>
     );
   }
@@ -377,17 +375,17 @@ export default function EditInfrastructurePage() {
                 ? "/dashboard/infrastructures"
                 : `/dashboard/infrastructures/${id}`
             }
-            className="text-gray-600 hover:text-gray-900"
+            className="text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-800 transition"
           >
             <FiArrowLeft className="w-6 h-6" />
           </Link>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
               {isReadOnly
-                ? "Details de l'infrastructure"
+                ? "Détails de l'infrastructure"
                 : "Modifier l'Infrastructure"}
             </h1>
-            <p className="text-gray-600 mt-1">
+            <p className="text-gray-600 dark:text-slate-400 mt-1">
               {isReadOnly
                 ? "Consultation en lecture seule"
                 : "Mettre à jour les informations de l'infrastructure"}
@@ -397,23 +395,23 @@ export default function EditInfrastructurePage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+        <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-300 px-4 py-3 rounded-2xl text-sm font-medium">
           {error}
         </div>
       )}
 
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-lg shadow p-6 space-y-6"
+        className="bg-white dark:bg-slate-800/90 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700/70 p-6 md:p-8 space-y-8"
       >
         {/* Informations de base */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-gray-900 border-b pb-2">
+          <h2 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white border-b border-gray-100 dark:border-slate-700/70 pb-3">
             Informations de base
           </h2>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">
               Nom de l'infrastructure <span className="text-red-500">*</span>
             </label>
             <input
@@ -423,13 +421,13 @@ export default function EditInfrastructurePage() {
               onChange={handleChange}
               required
               disabled={fieldDisabled}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="w-full px-4 py-2.5 bg-gray-50/50 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 rounded-xl text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-[#96D0EE] focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed transition"
               placeholder="Ex: Toilettes publiques - Place de l'Indépendance"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">
               Type d'infrastructure <span className="text-red-500">*</span>
             </label>
             <select
@@ -438,10 +436,10 @@ export default function EditInfrastructurePage() {
               onChange={handleChange}
               required
               disabled={fieldDisabled}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="w-full px-4 py-2.5 bg-gray-50/50 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 rounded-xl text-gray-900 dark:text-slate-100 focus:ring-2 focus:ring-[#96D0EE] focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed transition"
             >
               {/* Services Administratifs */}
-              <optgroup label="Services Administratifs">
+              <optgroup label="Services Administratifs" className="font-semibold text-gray-500 dark:text-slate-400">
                 <option value="mairie">Mairie</option>
                 <option value="prefecture">Préfecture</option>
                 <option value="tribunal">Tribunal</option>
@@ -450,7 +448,7 @@ export default function EditInfrastructurePage() {
               </optgroup>
 
               {/* Services Éducatifs */}
-              <optgroup label="Services Éducatifs">
+              <optgroup label="Services Éducatifs" className="font-semibold text-gray-500 dark:text-slate-400">
                 <option value="ecole_primaire">École primaire</option>
                 <option value="ecole_secondaire">École secondaire</option>
                 <option value="universite">Université</option>
@@ -459,7 +457,7 @@ export default function EditInfrastructurePage() {
               </optgroup>
 
               {/* Services de Santé */}
-              <optgroup label="Services de Santé">
+              <optgroup label="Services de Santé" className="font-semibold text-gray-500 dark:text-slate-400">
                 <option value="hopital">Hôpital</option>
                 <option value="centre_sante">Centre de santé</option>
                 <option value="clinique">Clinique</option>
@@ -468,7 +466,7 @@ export default function EditInfrastructurePage() {
               </optgroup>
 
               {/* Services Religieux */}
-              <optgroup label="Services Religieux">
+              <optgroup label="Services Religieux" className="font-semibold text-gray-500 dark:text-slate-400">
                 <option value="eglise">Église</option>
                 <option value="mosquee">Mosquée</option>
                 <option value="synagogue">Synagogue</option>
@@ -476,7 +474,7 @@ export default function EditInfrastructurePage() {
               </optgroup>
 
               {/* Installations Sportives et Récréatives */}
-              <optgroup label="Installations Sportives et Récréatives">
+              <optgroup label="Installations Sportives et Récréatives" className="font-semibold text-gray-500 dark:text-slate-400">
                 <option value="installation_sportive">
                   Installation sportive
                 </option>
@@ -490,65 +488,59 @@ export default function EditInfrastructurePage() {
               </optgroup>
 
               {/* Sanitaires et Hygiène */}
-              <optgroup label="Sanitaires et Hygiène">
+              <optgroup label="Sanitaires et Hygiène" className="font-semibold text-gray-500 dark:text-slate-400">
                 <option value="toilettes_publiques">Toilettes publiques</option>
                 <option value="point_eau">Point d'eau</option>
                 <option value="douche_publique">Douche publique</option>
               </optgroup>
 
               {/* Commerces et Services */}
-              <optgroup label="Commerces et Services">
+              <optgroup label="Commerces et Services" className="font-semibold text-gray-500 dark:text-slate-400">
                 <option value="marche">Marché</option>
                 <option value="supermarche">Supermarché</option>
-                <option value="restaurant">Restaurant</option>
-                <option value="hotel">Hôtel</option>
                 <option value="banque">Banque</option>
-                <option value="agence_voyage">Agence de voyage</option>
-                <option value="coiffeur">Coiffeur</option>
-                <option value="salon_beaute">Salon de beauté</option>
+                <option value="poste">Poste</option>
+                <option value="station_service">Station-service</option>
               </optgroup>
 
-              {/* Transports et Stationnement */}
-              <optgroup label="Transports et Stationnement">
+              {/* Transports */}
+              <optgroup label="Transports" className="font-semibold text-gray-500 dark:text-slate-400">
                 <option value="gare_routiere">Gare routière</option>
-                <option value="gare_ferroviaire">Gare ferroviaire</option>
+                <option value="arret_bus">Arrêt de bus</option>
+                <option value="embarcadere">Embarcadère</option>
                 <option value="aeroport">Aéroport</option>
-                <option value="port">Port</option>
-                <option value="parking">Parking</option>
-                <option value="station_taxi">Station de taxi</option>
               </optgroup>
 
-              {/* Espace de Divertissement et Culture */}
-              <optgroup label="Espace de Divertissement et Culture">
-                <option value="espace_divertissement">
-                  Espace de divertissement
-                </option>
-                <option value="cinema">Cinéma</option>
-                <option value="theatre">Théâtre</option>
+              {/* Culture et Tourisme */}
+              <optgroup label="Culture et Tourisme" className="font-semibold text-gray-500 dark:text-slate-400">
                 <option value="musee">Musée</option>
-                <option value="galerie_art">Galerie d'art</option>
-                <option value="salle_concert">Salle de concert</option>
+                <option value="monument">Monument</option>
+                <option value="centre_culturel">Centre culturel</option>
+                <option value="site_touristique">Site touristique</option>
+                <option value="plage">Plage</option>
               </optgroup>
 
-              {/* Services Sociaux et Communautaires */}
-              <optgroup label="Services Sociaux et Communautaires">
-                <option value="centre_social">Centre social</option>
-                <option value="orphelinat">Orphelinat</option>
-                <option value="foyer_personnes_agees">
-                  Foyer pour personnes âgées
-                </option>
-                <option value="centre_aide_handicapes">
-                  Centre d'aide aux handicapés
-                </option>
+              {/* Espaces Publics */}
+              <optgroup label="Espaces Publics" className="font-semibold text-gray-500 dark:text-slate-400">
+                <option value="place_publique">Place publique</option>
+                <option value="jardin_public">Jardin public</option>
+                <option value="espace_vert">Espace vert</option>
               </optgroup>
 
               {/* Autres */}
-              <option value="autre">Autre</option>
+              <optgroup label="Autres" className="font-semibold text-gray-500 dark:text-slate-400">
+                <option value="decharge">Décharge</option>
+                <option value="cimetiere">Cimetière</option>
+                <option value="espace_divertissement">
+                  Espace de divertissement
+                </option>
+                <option value="autre">Autre</option>
+              </optgroup>
             </select>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">
               Description
             </label>
             <textarea
@@ -557,7 +549,7 @@ export default function EditInfrastructurePage() {
               onChange={handleChange}
               rows={4}
               disabled={fieldDisabled}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="w-full px-4 py-2.5 bg-gray-50/50 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 rounded-xl text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-[#96D0EE] focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed transition"
               placeholder="Description détaillée de l'infrastructure..."
             />
           </div>
@@ -565,13 +557,13 @@ export default function EditInfrastructurePage() {
 
         {/* Localisation */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-gray-900 border-b pb-2">
+          <h2 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white border-b border-gray-100 dark:border-slate-700/70 pb-3">
             Localisation
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">
                 Latitude <span className="text-red-500">*</span>
               </label>
               <input
@@ -582,13 +574,13 @@ export default function EditInfrastructurePage() {
                 onChange={handleChange}
                 required
                 disabled={fieldDisabled}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-2.5 bg-gray-50/50 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 rounded-xl text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-[#96D0EE] focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed transition"
                 placeholder="6.3725"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">
                 Longitude <span className="text-red-500">*</span>
               </label>
               <input
@@ -599,14 +591,14 @@ export default function EditInfrastructurePage() {
                 onChange={handleChange}
                 required
                 disabled={fieldDisabled}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-2.5 bg-gray-50/50 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 rounded-xl text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-[#96D0EE] focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed transition"
                 placeholder="2.3544"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">
               Adresse complète <span className="text-red-500">*</span>
             </label>
             <input
@@ -616,14 +608,14 @@ export default function EditInfrastructurePage() {
               onChange={handleChange}
               required
               disabled={fieldDisabled}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="w-full px-4 py-2.5 bg-gray-50/50 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 rounded-xl text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-[#96D0EE] focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed transition"
               placeholder="Ex: Place de l'Indépendance, Cotonou"
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">
                 Quartier <span className="text-red-500">*</span>
               </label>
               <input
@@ -633,13 +625,13 @@ export default function EditInfrastructurePage() {
                 onChange={handleChange}
                 required
                 disabled={fieldDisabled}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-2.5 bg-gray-50/50 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 rounded-xl text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-[#96D0EE] focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed transition"
                 placeholder="Ex: Gbégamey"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">
                 Commune
               </label>
               <input
@@ -648,7 +640,7 @@ export default function EditInfrastructurePage() {
                 value={formData.commune}
                 onChange={handleChange}
                 disabled={fieldDisabled}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-2.5 bg-gray-50/50 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 rounded-xl text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-[#96D0EE] focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed transition"
               />
             </div>
           </div>
@@ -656,13 +648,13 @@ export default function EditInfrastructurePage() {
 
         {/* Contact */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-gray-900 border-b pb-2">
+          <h2 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white border-b border-gray-100 dark:border-slate-700/70 pb-3">
             Contact
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">
                 Téléphone
               </label>
               <input
@@ -671,13 +663,13 @@ export default function EditInfrastructurePage() {
                 value={formData.telephone}
                 onChange={handleChange}
                 disabled={fieldDisabled}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-2.5 bg-gray-50/50 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 rounded-xl text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-[#96D0EE] focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed transition"
                 placeholder="+229 XX XX XX XX"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">
                 Email
               </label>
               <input
@@ -686,7 +678,7 @@ export default function EditInfrastructurePage() {
                 value={formData.email}
                 onChange={handleChange}
                 disabled={fieldDisabled}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-2.5 bg-gray-50/50 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 rounded-xl text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-[#96D0EE] focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed transition"
                 placeholder="contact@example.com"
               />
             </div>
@@ -695,13 +687,13 @@ export default function EditInfrastructurePage() {
 
         {/* État et accessibilité */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-gray-900 border-b pb-2">
+          <h2 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white border-b border-gray-100 dark:border-slate-700/70 pb-3">
             État et accessibilité
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">
                 État <span className="text-red-500">*</span>
               </label>
               <select
@@ -710,7 +702,7 @@ export default function EditInfrastructurePage() {
                 onChange={handleChange}
                 required
                 disabled={fieldDisabled}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-2.5 bg-gray-50/50 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 rounded-xl text-gray-900 dark:text-slate-100 focus:ring-2 focus:ring-[#96D0EE] focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed transition"
               >
                 <option value="excellent">Excellent</option>
                 <option value="bon">Bon</option>
@@ -721,7 +713,7 @@ export default function EditInfrastructurePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">
                 Niveau de fréquentation
               </label>
               <select
@@ -729,7 +721,7 @@ export default function EditInfrastructurePage() {
                 value={formData.niveauFrequentation}
                 onChange={handleChange}
                 disabled={fieldDisabled}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-2.5 bg-gray-50/50 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 rounded-xl text-gray-900 dark:text-slate-100 focus:ring-2 focus:ring-[#96D0EE] focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed transition"
               >
                 <option value="faible">Faible</option>
                 <option value="moyen">Moyen</option>
@@ -738,60 +730,60 @@ export default function EditInfrastructurePage() {
             </div>
           </div>
 
-          <div className="flex gap-6">
-            <label className="flex items-center gap-2">
+          <div className="flex flex-wrap gap-6 pt-2">
+            <label className="flex items-center gap-2.5 cursor-pointer">
               <input
                 type="checkbox"
                 name="pmr"
                 checked={formData.pmr}
                 onChange={handleChange}
                 disabled={fieldDisabled}
-                className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                className="w-4 h-4 text-primary-600 bg-gray-100 dark:bg-slate-700 border-gray-300 dark:border-slate-600 rounded focus:ring-primary-500"
               />
-              <span className="text-sm text-gray-700">
+              <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
                 Accessible PMR (Personnes à Mobilité Réduite)
               </span>
             </label>
 
-            <label className="flex items-center gap-2">
+            <label className="flex items-center gap-2.5 cursor-pointer">
               <input
                 type="checkbox"
                 name="enfants"
                 checked={formData.enfants}
                 onChange={handleChange}
                 disabled={fieldDisabled}
-                className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                className="w-4 h-4 text-primary-600 bg-gray-100 dark:bg-slate-700 border-gray-300 dark:border-slate-600 rounded focus:ring-primary-500"
               />
-              <span className="text-sm text-gray-700">Adapté aux enfants</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-slate-300">Adapté aux enfants</span>
             </label>
           </div>
         </div>
 
         {/* Photos */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-gray-900 border-b pb-2">
+          <h2 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white border-b border-gray-100 dark:border-slate-700/70 pb-3">
             Photos (optionnel)
           </h2>
 
           {/* Photos existantes */}
           {existingPhotos.length > 0 && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">
                 Photos existantes
               </label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {existingPhotos.map((photo, index) => (
-                  <div key={index} className="relative group">
+                  <div key={index} className="relative group rounded-xl overflow-hidden border border-gray-200 dark:border-slate-700">
                     <img
                       src={photo.url}
                       alt={`Photo existante ${index + 1}`}
-                      className="w-full h-32 object-cover rounded-lg border border-gray-300"
+                      className="w-full h-32 object-cover"
                     />
                     {!isReadOnly && (
                       <button
                         type="button"
                         onClick={() => removeExistingPhoto(index)}
-                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow"
                       >
                         <FiX className="w-4 h-4" />
                       </button>
@@ -804,7 +796,7 @@ export default function EditInfrastructurePage() {
 
           {!isReadOnly && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">
                 Ajouter de nouvelles photos
               </label>
               <div className="mt-2">
@@ -819,12 +811,12 @@ export default function EditInfrastructurePage() {
                 />
                 <label
                   htmlFor="image-upload"
-                  className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
+                  className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-gray-50 dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-700 dark:text-slate-200 text-sm font-medium transition"
                 >
-                  <FiImage className="w-5 h-5" />
+                  <FiImage className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                   <span>Sélectionner des images</span>
                 </label>
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs text-gray-500 dark:text-slate-400 mt-2">
                   Maximum 10 images, 5MB par image. Tous formats image : JPG,
                   PNG, GIF, WebP, BMP, HEIC, etc.
                 </p>
@@ -833,16 +825,16 @@ export default function EditInfrastructurePage() {
               {imagePreviews.length > 0 && (
                 <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
                   {imagePreviews.map((preview, index) => (
-                    <div key={index} className="relative group">
+                    <div key={index} className="relative group rounded-xl overflow-hidden border border-gray-200 dark:border-slate-700">
                       <img
                         src={preview}
                         alt={`Prévisualisation ${index + 1}`}
-                        className="w-full h-32 object-cover rounded-lg border border-gray-300"
+                        className="w-full h-32 object-cover"
                       />
                       <button
                         type="button"
                         onClick={() => removeImage(index)}
-                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow"
                       >
                         <FiX className="w-4 h-4" />
                       </button>
@@ -856,7 +848,7 @@ export default function EditInfrastructurePage() {
 
         {/* Équipements */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-gray-900 border-b pb-2">
+          <h2 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white border-b border-gray-100 dark:border-slate-700/70 pb-3">
             Équipements
           </h2>
 
@@ -869,14 +861,14 @@ export default function EditInfrastructurePage() {
                 e.key === "Enter" && (e.preventDefault(), addEquipement())
               }
               disabled={fieldDisabled}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="flex-1 px-4 py-2.5 bg-gray-50/50 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 rounded-xl text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-[#96D0EE] focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed transition text-sm"
               placeholder="Ajouter un équipement (ex: Parking, Éclairage, Eau potable)"
             />
             {!isReadOnly && (
               <button
                 type="button"
                 onClick={addEquipement}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+                className="px-4 py-2.5 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200 rounded-xl hover:bg-gray-200 dark:hover:bg-slate-600 font-medium text-sm transition"
               >
                 Ajouter
               </button>
@@ -888,14 +880,14 @@ export default function EditInfrastructurePage() {
               {formData.equipements.map((equipement, index) => (
                 <span
                   key={index}
-                  className="inline-flex items-center gap-2 px-3 py-1 bg-primary-100 text-primary-800 rounded-full text-sm"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-100 dark:border-primary-800/40 rounded-full text-xs font-semibold"
                 >
                   {equipement}
                   {!isReadOnly && (
                     <button
                       type="button"
                       onClick={() => removeEquipement(index)}
-                      className="text-primary-600 hover:text-primary-800"
+                      className="text-primary-600 dark:text-primary-400 hover:text-red-500 dark:hover:text-red-400 text-sm ml-0.5"
                     >
                       ×
                     </button>
@@ -908,7 +900,7 @@ export default function EditInfrastructurePage() {
 
         {/* Horaires */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-gray-900 border-b pb-2">
+          <h2 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white border-b border-gray-100 dark:border-slate-700/70 pb-3">
             Horaires d'ouverture
           </h2>
 
@@ -921,9 +913,9 @@ export default function EditInfrastructurePage() {
               return (
                 <div
                   key={jour}
-                  className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg"
+                  className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-gray-50/70 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-700/60 rounded-2xl"
                 >
-                  <label className="flex items-center gap-2 min-w-[120px]">
+                  <label className="flex items-center gap-2.5 min-w-[130px] cursor-pointer">
                     <input
                       type="checkbox"
                       checked={jourHoraires.ouvert}
@@ -931,14 +923,14 @@ export default function EditInfrastructurePage() {
                         handleHorairesChange(jour, "ouvert", e.target.checked)
                       }
                       disabled={fieldDisabled}
-                      className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                      className="w-4 h-4 text-primary-600 bg-gray-100 dark:bg-slate-700 border-gray-300 dark:border-slate-600 rounded focus:ring-primary-500"
                     />
-                    <span className="text-sm font-medium text-gray-700">
+                    <span className="text-sm font-semibold text-gray-700 dark:text-slate-200">
                       {joursLabels[jour]}
                     </span>
                   </label>
 
-                  {jourHoraires.ouvert && (
+                  {jourHoraires.ouvert ? (
                     <div className="flex items-center gap-2 flex-1">
                       <input
                         type="time"
@@ -947,9 +939,9 @@ export default function EditInfrastructurePage() {
                           handleHorairesChange(jour, "debut", e.target.value)
                         }
                         disabled={fieldDisabled}
-                        className="px-3 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        className="px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-[#96D0EE] disabled:opacity-60 disabled:cursor-not-allowed"
                       />
-                      <span className="text-gray-500">-</span>
+                      <span className="text-gray-400 dark:text-slate-500 font-medium">à</span>
                       <input
                         type="time"
                         value={jourHoraires.fin}
@@ -957,9 +949,11 @@ export default function EditInfrastructurePage() {
                           handleHorairesChange(jour, "fin", e.target.value)
                         }
                         disabled={fieldDisabled}
-                        className="px-3 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        className="px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-[#96D0EE] disabled:opacity-60 disabled:cursor-not-allowed"
                       />
                     </div>
+                  ) : (
+                    <span className="text-xs text-gray-400 dark:text-slate-500 italic">Fermé</span>
                   )}
                 </div>
               );
@@ -968,14 +962,14 @@ export default function EditInfrastructurePage() {
         </div>
 
         {/* Boutons */}
-        <div className="flex justify-end gap-4 pt-4 border-t">
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-6 border-t border-gray-100 dark:border-slate-700/70">
           <Link
             href={
               isReadOnly
                 ? "/dashboard/infrastructures"
                 : `/dashboard/infrastructures/${id}`
             }
-            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+            className="px-6 py-2.5 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 font-medium text-sm transition text-center"
           >
             {isReadOnly ? "Retour" : "Annuler"}
           </Link>
@@ -983,7 +977,7 @@ export default function EditInfrastructurePage() {
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-medium text-sm shadow-sm transition"
             >
               {loading ? (
                 <>
@@ -992,7 +986,7 @@ export default function EditInfrastructurePage() {
                 </>
               ) : (
                 <>
-                  <FiSave />
+                  <FiSave className="w-4 h-4" />
                   Enregistrer les modifications
                 </>
               )}

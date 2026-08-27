@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Chart from "@/components/Chart";
+import LogoLoader from "@/components/LogoLoader";
 import { useAuth } from "@/contexts/AuthContext";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
@@ -109,7 +110,11 @@ export default function StatistiquesPage() {
   };
 
   if (loading) {
-    return <div className="text-center py-12">Chargement...</div>;
+    return (
+      <div className="flex items-center justify-center py-24">
+        <LogoLoader size="lg" text="Chargement des graphiques statistiques..." />
+      </div>
+    );
   }
 
   if (!stats) {
@@ -841,67 +846,71 @@ export default function StatistiquesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
           Statistiques Détaillées
         </h1>
-        <p className="text-gray-600 mt-1">Analyse approfondie des données</p>
+        <p className="text-gray-600 dark:text-slate-400 mt-1">Analyse approfondie des données</p>
       </div>
 
       <div className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          <div className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/70 p-6">
+            <h2 className="text-lg font-semibold text-gray-800 dark:text-slate-100 mb-1">
               Répartition par Type
             </h2>
+            <p className="text-xs text-gray-400 dark:text-slate-400 mb-4">Donut interactif — survolez pour détailler</p>
             {stats.parType && stats.parType.length > 0 ? (
               <Chart
                 data={stats.parType}
                 type="pie"
                 dataKey="count"
                 nameKey="_id"
+                height={300}
               />
             ) : (
-              <p className="text-gray-500 text-center py-8">
-                Aucune donnée disponible
-              </p>
+              <p className="text-gray-400 dark:text-slate-500 text-center py-8 text-sm">Aucune donnée disponible</p>
             )}
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          <div className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/70 p-6">
+            <h2 className="text-lg font-semibold text-gray-800 dark:text-slate-100 mb-1">
               Répartition par État
             </h2>
+            <p className="text-xs text-gray-400 dark:text-slate-400 mb-4">Statut de validation des infrastructures</p>
             {stats.parEtat && stats.parEtat.length > 0 ? (
               <Chart
                 data={stats.parEtat}
                 type="pie"
                 dataKey="count"
                 nameKey="_id"
+                height={300}
               />
             ) : (
-              <p className="text-gray-500 text-center py-8">
-                Aucune donnée disponible
-              </p>
+              <p className="text-gray-400 dark:text-slate-500 text-center py-8 text-sm">Aucune donnée disponible</p>
             )}
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+        <div className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/70 p-6">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-slate-100 mb-1">
             Infrastructures par Département
           </h2>
+          <p className="text-xs text-gray-400 dark:text-slate-400 mb-4">12 départements officiels du Bénin</p>
           <Chart
             data={departementsChartData}
             type="bar"
             dataKey="count"
             nameKey="_id"
+            height={320}
+            color="#10b981"
           />
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+        <div className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/70 p-6">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-slate-100 mb-1">
             Infrastructures par Commune
           </h2>
+          <p className="text-xs text-gray-400 dark:text-slate-400 mb-4">Filtrez par département</p>
           <div className="mb-4">
             <select
               value={selectedDepartement}
@@ -914,9 +923,9 @@ export default function StatistiquesPage() {
                 fetchCommunes(value);
                 fetchArrondissementsByDepartement(value);
               }}
-              className="w-full md:w-80 border border-gray-300 rounded-md px-3 py-2 text-sm"
+              className="w-full md:w-72 border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#96D0EE] focus:border-transparent transition"
             >
-              <option value="">Choisir un departement</option>
+              <option value="">Choisir un département</option>
               {officialDepartements.map((departement) => (
                 <option key={departement} value={departement}>
                   {departement}
@@ -930,34 +939,42 @@ export default function StatistiquesPage() {
             dataKey="count"
             nameKey="_id"
             xAxisFontSize={9}
+            height={340}
+            color="#f59e0b"
           />
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+        <div className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/70 p-6">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-slate-100 mb-1">
             Infrastructures par Arrondissement
           </h2>
+          <p className="text-xs text-gray-400 dark:text-slate-400 mb-4">Détail par arrondissement</p>
           <Chart
             data={arrondissementChartData}
             type="bar"
             dataKey="count"
             nameKey="_id"
             xAxisFontSize={9}
+            height={340}
+            color="#8b5cf6"
           />
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+        <div className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/70 p-6">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-slate-100 mb-1">
             Évolution (6 derniers mois)
           </h2>
+          <p className="text-xs text-gray-400 dark:text-slate-400 mb-4">Nouvelles infrastructures ajoutées par mois</p>
           <Chart
             data={stats.evolution.map((e) => ({
               _id: `${e._id.month}/${e._id.year}`,
               count: e.count,
             }))}
-            type="bar"
+            type="area"
             dataKey="count"
             nameKey="_id"
+            height={280}
+            color="#6366f1"
           />
         </div>
       </div>

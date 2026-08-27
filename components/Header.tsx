@@ -25,7 +25,10 @@ import {
   FiLogOut,
   FiUser,
   FiChevronDown,
+  FiSun,
+  FiMoon,
 } from "react-icons/fi";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface SearchResult {
   id: string;
@@ -38,6 +41,7 @@ interface SearchResult {
 export default function Header() {
   const { user, logout, token, firebaseAuthenticated } = useAuth();
   const router = useRouter();
+  const { toggleTheme, isDark } = useTheme();
   const [showMenu, setShowMenu] = useState(false);
   const [showNotif, setShowNotif] = useState(false);
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
@@ -285,7 +289,7 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 px-4 md:px-6 py-4">
+    <header className="bg-white dark:bg-slate-900 shadow-sm border-b border-gray-200 dark:border-slate-800 px-4 md:px-6 py-4 transition-colors duration-300">
       <div className="flex items-center justify-between gap-4">
         {/* Recherche - masquée sur mobile */}
         <div className="hidden md:flex flex-1 max-w-xl relative">
@@ -299,7 +303,7 @@ export default function Header() {
               onFocus={() =>
                 searchResults.length > 0 && setShowSearchResults(true)
               }
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 dark:bg-slate-800/60 hover:bg-white dark:hover:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-[#96D0EE]/50 focus:border-[#96D0EE] transition-all duration-200 text-sm text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500"
             />
 
             {/* Résultats de recherche */}
@@ -309,16 +313,16 @@ export default function Header() {
                   className="fixed inset-0 z-10"
                   onClick={() => setShowSearchResults(false)}
                 ></div>
-                <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 z-20 max-h-96 overflow-auto">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 rounded-xl shadow-lg shadow-black/10 dark:shadow-black/40 border border-gray-100 dark:border-slate-700 z-20 max-h-96 overflow-auto">
                   {isSearching ? (
                     <div className="px-4 py-8 text-center">
                       <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
-                      <p className="mt-2 text-sm text-gray-500">
+                      <p className="mt-2 text-sm text-gray-500 dark:text-slate-400">
                         Recherche en cours...
                       </p>
                     </div>
                   ) : searchResults.length === 0 ? (
-                    <div className="px-4 py-8 text-center text-sm text-gray-500">
+                    <div className="px-4 py-8 text-center text-sm text-gray-500 dark:text-slate-400">
                       Aucun résultat trouvé pour "{searchQuery}"
                     </div>
                   ) : (
@@ -327,18 +331,18 @@ export default function Header() {
                         <button
                           key={result.id}
                           onClick={() => handleSelectResult(result)}
-                          className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
+                          className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors border-b border-gray-100 dark:border-slate-800 last:border-b-0"
                         >
                           <div className="flex items-center gap-3">
                             <span className="text-2xl">
                               {getResultIcon(result.type)}
                             </span>
                             <div className="flex-1 min-w-0">
-                              <div className="text-sm font-medium text-gray-900">
+                              <div className="text-sm font-medium text-gray-900 dark:text-slate-100">
                                 {result.title}
                               </div>
                               {result.subtitle && (
-                                <div className="text-xs text-gray-500 mt-0.5">
+                                <div className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
                                   {result.subtitle}
                                 </div>
                               )}
@@ -365,14 +369,41 @@ export default function Header() {
             <FiSearch className="w-5 h-5" />
           </button>
 
+          {/* ── Toggle Jour / Nuit (accessibilité non-voyants) ─────────────── */}
+          <button
+            id="theme-toggle"
+            onClick={toggleTheme}
+            aria-label={isDark ? 'Passer en mode jour' : 'Passer en mode nuit'}
+            aria-pressed={isDark}
+            title={isDark ? 'Mode Jour' : 'Mode Nuit'}
+            className="relative p-2.5 rounded-xl transition-all duration-300 group
+              text-gray-500 hover:text-[#004B70] hover:bg-[#96D0EE]/10
+              dark:text-slate-400 dark:hover:text-[#96D0EE] dark:hover:bg-white/5
+              focus:outline-none focus:ring-2 focus:ring-[#96D0EE] focus:ring-offset-1"
+          >
+            <span className="sr-only">
+              {isDark ? 'Activer le mode jour' : 'Activer le mode nuit'}
+            </span>
+            <span
+              className="block transition-all duration-500 ease-in-out"
+              style={{ transform: isDark ? 'rotate(0deg) scale(1)' : 'rotate(30deg) scale(1)' }}
+            >
+              {isDark ? (
+                <FiSun className="w-5 h-5 text-amber-400 drop-shadow-[0_0_6px_rgba(251,191,36,0.6)]" aria-hidden="true" />
+              ) : (
+                <FiMoon className="w-5 h-5" aria-hidden="true" />
+              )}
+            </span>
+          </button>
+
           {/* Notifications */}
           <div className="relative">
             <button
               onClick={() => setShowNotif((v) => !v)}
-              className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+              className="relative p-2.5 text-gray-500 hover:text-[#004B70] hover:bg-[#96D0EE]/10 rounded-xl transition-colors"
               title="Notifications"
             >
-              <FiBell className="w-5 h-5 md:w-6 md:h-6" />
+              <FiBell className="w-5 h-5 md:w-5 md:h-5" />
               {unreadCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] leading-[18px] rounded-full text-center">
                   {unreadCount > 99 ? "99+" : unreadCount}
@@ -386,18 +417,18 @@ export default function Header() {
                   className="fixed inset-0 z-10"
                   onClick={() => setShowNotif(false)}
                 ></div>
-                <div className="absolute right-0 mt-2 w-80 md:w-96 bg-white rounded-lg shadow-lg border border-gray-200 z-20 overflow-hidden">
-                  <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
-                    <div className="text-sm font-semibold text-gray-900">
+                <div className="absolute right-0 mt-3 w-80 md:w-96 bg-white dark:bg-slate-900 rounded-2xl shadow-xl shadow-black/5 dark:shadow-black/40 border border-gray-100 dark:border-slate-700 z-20 overflow-hidden">
+                  <div className="px-5 py-4 border-b border-gray-100 dark:border-slate-800 flex items-center justify-between bg-gray-50/50 dark:bg-slate-800/50">
+                    <div className="text-sm font-semibold text-gray-900 dark:text-slate-100">
                       Notifications
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-gray-500 dark:text-slate-400">
                       {unreadCount} non lue(s)
                     </div>
                   </div>
 
                   {notifError && (
-                    <div className="px-4 py-3 text-sm text-red-600 bg-red-50 border-b border-red-100">
+                    <div className="px-4 py-3 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 border-b border-red-100 dark:border-red-900/40">
                       {notifError}
                     </div>
                   )}
@@ -408,7 +439,7 @@ export default function Header() {
                         Aucune notification pour le moment.
                       </div>
                     ) : (
-                      <div className="divide-y divide-gray-100">
+                      <div className="divide-y divide-gray-100 dark:divide-slate-800">
                         {notifications.map((n) => {
                           const isUnread = user?.id
                             ? !(n.readBy || []).includes(user.id)
@@ -419,25 +450,25 @@ export default function Header() {
                           return (
                             <div
                               key={n.id}
-                              className={`px-4 py-3 hover:bg-gray-50 ${isUnread ? "bg-primary-50/40" : ""}`}
+                              className={`px-4 py-3 hover:bg-gray-50 dark:hover:bg-slate-800/80 ${isUnread ? "bg-primary-50/40 dark:bg-sky-950/20" : ""}`}
                             >
                               <div className="flex items-start justify-between gap-3">
                                 <div className="min-w-0">
-                                  <div className="text-xs uppercase tracking-wide text-gray-400">
+                                  <div className="text-xs uppercase tracking-wide text-gray-400 dark:text-slate-500">
                                     {typeLabel(n.type)}
                                   </div>
                                   <div
-                                    className={`text-sm ${isUnread ? "font-semibold text-gray-900" : "text-gray-800"}`}
+                                    className={`text-sm ${isUnread ? "font-semibold text-gray-900 dark:text-white" : "text-gray-800 dark:text-slate-200"}`}
                                   >
                                     {n.title}
                                   </div>
                                   {n.message ? (
-                                    <div className="text-xs text-gray-600 mt-1 line-clamp-2">
+                                    <div className="text-xs text-gray-600 dark:text-slate-400 mt-1 line-clamp-2">
                                       {n.message}
                                     </div>
                                   ) : null}
                                   {created ? (
-                                    <div className="text-[11px] text-gray-400 mt-1">
+                                    <div className="text-[11px] text-gray-400 dark:text-slate-500 mt-1">
                                       {created.toLocaleString("fr-FR")}
                                     </div>
                                   ) : null}
@@ -482,19 +513,29 @@ export default function Header() {
           <div className="relative">
             <button
               onClick={() => setShowMenu(!showMenu)}
-              className="flex items-center gap-2 md:gap-3 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="flex items-center gap-2 md:gap-3 p-1.5 pr-3 hover:bg-gray-50 dark:hover:bg-slate-800 border border-transparent hover:border-gray-100 dark:hover:border-slate-700 rounded-xl transition-all"
             >
               <div className="hidden md:block text-right">
-                <div className="text-sm font-medium text-gray-900">
+                <div className="text-sm font-medium text-gray-900 dark:text-slate-100">
                   {user?.prenom} {user?.nom}
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-500 dark:text-slate-400">
                   {getRoleLabel(user?.role || "")}
                 </div>
               </div>
-              <div className="w-8 h-8 md:w-10 md:h-10 bg-primary-600 rounded-full flex items-center justify-center text-white font-medium text-sm md:text-base">
-                {user?.prenom?.charAt(0)}
-                {user?.nom?.charAt(0)}
+              <div className="w-9 h-9 md:w-10 md:h-10 rounded-full overflow-hidden border-2 border-[#96D0EE]/60 dark:border-[#004B70] bg-[#004B70] flex items-center justify-center text-white font-medium text-sm md:text-base shadow-sm flex-shrink-0">
+                {user?.avatar ? (
+                  <img
+                    src={user.avatar}
+                    alt={`${user?.prenom || ""} ${user?.nom || ""}`}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span>
+                    {user?.prenom?.charAt(0)}
+                    {user?.nom?.charAt(0)}
+                  </span>
+                )}
               </div>
               <FiChevronDown
                 className={`w-4 h-4 text-gray-400 transition-transform ${showMenu ? "rotate-180" : ""}`}
@@ -508,16 +549,32 @@ export default function Header() {
                   className="fixed inset-0 z-10"
                   onClick={() => setShowMenu(false)}
                 ></div>
-                <div className="absolute right-0 mt-2 w-48 md:w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-20">
-                  <div className="p-4 border-b border-gray-200 md:hidden">
-                    <div className="text-sm font-medium text-gray-900">
-                      {user?.prenom} {user?.nom}
+                <div className="absolute right-0 mt-3 w-48 md:w-56 bg-white dark:bg-slate-900 rounded-2xl shadow-xl shadow-black/5 dark:shadow-black/40 border border-gray-100 dark:border-slate-700 z-20 overflow-hidden">
+                  <div className="p-4 border-b border-gray-100 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full overflow-hidden border border-[#96D0EE]/50 bg-[#004B70] flex items-center justify-center text-white font-medium text-sm flex-shrink-0">
+                      {user?.avatar ? (
+                        <img
+                          src={user.avatar}
+                          alt={`${user?.prenom || ""} ${user?.nom || ""}`}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span>
+                          {user?.prenom?.charAt(0)}
+                          {user?.nom?.charAt(0)}
+                        </span>
+                      )}
                     </div>
-                    <div className="text-xs text-gray-500 mt-1">
-                      {user?.email}
-                    </div>
-                    <div className="text-xs text-gray-500 mt-1">
-                      {getRoleLabel(user?.role || "")}
+                    <div className="min-w-0 flex-1">
+                      <div className="text-sm font-medium text-gray-900 dark:text-slate-100 truncate">
+                        {user?.prenom} {user?.nom}
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-slate-400 truncate">
+                        {user?.email}
+                      </div>
+                      <div className="text-[10px] uppercase tracking-wider font-bold text-[#004B70] dark:text-[#96D0EE] mt-0.5">
+                        {getRoleLabel(user?.role || "")}
+                      </div>
                     </div>
                   </div>
                   <div className="py-2">
@@ -526,14 +583,14 @@ export default function Header() {
                         router.push("/dashboard/profil");
                         setShowMenu(false);
                       }}
-                      className="w-full flex items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-[#004B70] dark:hover:text-[#96D0EE] transition-colors"
                     >
                       <FiUser className="w-4 h-4" />
                       Mon Profil
                     </button>
                     <button
                       onClick={handleLogout}
-                      className="w-full flex items-center gap-3 px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 transition-colors"
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
                     >
                       <FiLogOut className="w-4 h-4" />
                       Déconnexion
@@ -550,10 +607,10 @@ export default function Header() {
       {showMobileSearch && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div
-            className="absolute inset-0 bg-black/50"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setShowMobileSearch(false)}
           ></div>
-          <div className="absolute inset-x-0 top-0 bg-white p-4 shadow-lg">
+          <div className="absolute inset-x-0 top-0 bg-white dark:bg-slate-900 p-4 shadow-xl border-b border-gray-100 dark:border-slate-800">
             <div className="flex items-center gap-3 mb-4">
               <button
                 onClick={() => {
@@ -561,22 +618,22 @@ export default function Header() {
                   setSearchQuery("");
                   setSearchResults([]);
                 }}
-                className="p-2 text-gray-600 hover:text-gray-900"
+                className="p-2 text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition"
               >
                 ← Retour
               </button>
-              <h3 className="text-lg font-semibold text-gray-900">Recherche</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Recherche</h3>
             </div>
 
             <div className="relative">
-              <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-slate-500" />
               <input
                 type="text"
-                placeholder="Rechercher..."
+                placeholder="Rechercher dans l'application..."
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
                 autoFocus
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-slate-100 border border-gray-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-[#96D0EE] focus:border-transparent placeholder-gray-400 dark:placeholder-slate-500 text-sm"
               />
             </div>
 
@@ -585,16 +642,16 @@ export default function Header() {
               {isSearching ? (
                 <div className="py-8 text-center">
                   <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-                  <p className="mt-2 text-sm text-gray-500">
+                  <p className="mt-2 text-sm text-gray-500 dark:text-slate-400">
                     Recherche en cours...
                   </p>
                 </div>
               ) : searchQuery.trim().length < 2 ? (
-                <div className="py-8 text-center text-sm text-gray-500">
+                <div className="py-8 text-center text-sm text-gray-500 dark:text-slate-400">
                   Tapez au moins 2 caractères pour rechercher
                 </div>
               ) : searchResults.length === 0 ? (
-                <div className="py-8 text-center text-sm text-gray-500">
+                <div className="py-8 text-center text-sm text-gray-500 dark:text-slate-400">
                   Aucun résultat trouvé pour "{searchQuery}"
                 </div>
               ) : (
@@ -606,18 +663,18 @@ export default function Header() {
                         handleSelectResult(result);
                         setShowMobileSearch(false);
                       }}
-                      className="w-full px-4 py-3 text-left bg-white hover:bg-gray-50 rounded-lg border border-gray-200 transition-colors"
+                      className="w-full px-4 py-3 text-left bg-white dark:bg-slate-850 hover:bg-gray-50 dark:hover:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-800 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <span className="text-2xl">
                           {getResultIcon(result.type)}
                         </span>
                         <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-gray-900 dark:text-slate-100">
                             {result.title}
                           </div>
                           {result.subtitle && (
-                            <div className="text-xs text-gray-500 mt-0.5">
+                            <div className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
                               {result.subtitle}
                             </div>
                           )}

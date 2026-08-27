@@ -13,6 +13,7 @@ import {
 } from "react-icons/fi";
 import StatCard from "@/components/StatCard";
 import Chart from "@/components/Chart";
+import LogoLoader from "@/components/LogoLoader";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
@@ -84,8 +85,8 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      <div className="flex items-center justify-center py-24">
+        <LogoLoader size="lg" text="Chargement des indicateurs clés..." />
       </div>
     );
   }
@@ -101,8 +102,8 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Tableau de Bord</h1>
-        <p className="text-gray-600 mt-1">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Tableau de Bord</h1>
+        <p className="text-gray-600 dark:text-slate-400 mt-1">
           Vue d'ensemble des infrastructures publiques
         </p>
       </div>
@@ -148,72 +149,81 @@ export default function DashboardPage() {
 
       {/* Graphiques */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+        <div className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/70 p-6">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-slate-100 mb-1">
             Infrastructures par Type
           </h2>
+          <p className="text-xs text-gray-400 dark:text-slate-400 mb-4">Répartition en donut interactif</p>
           <Chart
             data={stats.parType}
             type="pie"
             dataKey="count"
             nameKey="_id"
+            height={300}
           />
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+        <div className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/70 p-6">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-slate-100 mb-1">
             Infrastructures par Département
           </h2>
+          <p className="text-xs text-gray-400 dark:text-slate-400 mb-4">12 départements du Bénin</p>
           <Chart
             data={stats.parDepartement}
             type="bar"
             dataKey="count"
             nameKey="_id"
+            height={300}
+            color="#10b981"
           />
         </div>
       </div>
 
       {/* Top infrastructures */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-          <FiHeart className="text-red-500 fill-current" />
-          Top 5 Infrastructures les mieux notées
-        </h2>
+      <div className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-gray-100/80 dark:border-slate-700/70 overflow-hidden">
+        <div className="px-6 py-5 border-b border-gray-100 dark:border-slate-700/70 bg-gray-50/50 dark:bg-slate-800/50">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-slate-100 flex items-center gap-2">
+            <FiHeart className="text-rose-500 fill-current" />
+            Top 5 Infrastructures les mieux notées
+          </h2>
+        </div>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700/70">
+            <thead className="bg-gray-50 dark:bg-slate-800">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                   Nom
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                   Type
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                   Note moyenne
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                   Nombre d'avis
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-slate-800/40 divide-y divide-gray-100 dark:divide-slate-700/50">
               {stats.topInfrastructures.map((infra, index) => (
-                <tr key={index}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <tr key={index} className="hover:bg-gray-50/50 dark:hover:bg-slate-700/30 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-slate-200">
                     {infra.nom}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {infra.type}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
+                    <span className="px-2.5 py-1 bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 rounded-lg text-xs font-medium">
+                      {infra.type}
+                    </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <div className="flex items-center gap-1">
-                      <FiHeart className="text-red-500 fill-current" />
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-slate-300 font-medium">
+                    <div className="flex items-center gap-1.5">
+                      <FiHeart className="text-rose-500 fill-current" />
                       {infra.noteMoyenne.toFixed(1)}/5
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {infra.nombreAvis}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
+                    {infra.nombreAvis} avis
                   </td>
                 </tr>
               ))}

@@ -19,6 +19,7 @@ import {
   FiPlus,
   FiSave,
 } from "react-icons/fi";
+import LogoLoader from "@/components/LogoLoader";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
@@ -270,8 +271,8 @@ export default function ProfilsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      <div className="flex items-center justify-center py-24">
+        <LogoLoader size="lg" text="Chargement des profils..." />
       </div>
     );
   }
@@ -285,10 +286,10 @@ export default function ProfilsPage() {
     <div className="space-y-4 md:space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold text-gray-900">
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
             Gestion des Profils
           </h1>
-          <p className="text-sm md:text-base text-gray-600 mt-1">
+          <p className="text-sm md:text-base text-gray-600 dark:text-slate-400 mt-1">
             {currentUser?.role === "super_admin"
               ? "Gérer les administrateurs et agents communaux"
               : "Gérer les agents communaux"}
@@ -297,7 +298,7 @@ export default function ProfilsPage() {
         {canViewAgents && (
           <button
             onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors w-full sm:w-auto"
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl transition-all shadow-sm w-full sm:w-auto font-medium text-sm"
           >
             <FiPlus className="w-5 h-5" />
             <span>Créer un Agent</span>
@@ -306,27 +307,27 @@ export default function ProfilsPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+        <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-300 px-4 py-3 rounded-xl text-sm">
           {error}
         </div>
       )}
 
       {success && (
-        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+        <div className="bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800/50 text-green-700 dark:text-green-300 px-4 py-3 rounded-xl text-sm">
           {success}
         </div>
       )}
 
       {/* Filtres */}
-      <div className="bg-white rounded-lg shadow p-4">
+      <div className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/70 p-4">
         <div className="flex flex-wrap gap-2">
           {canViewAdmins && (
             <button
               onClick={() => setSelectedRole("admin")}
-              className={`px-4 py-2 rounded-lg transition-colors ${
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
                 selectedRole === "admin"
-                  ? "bg-primary-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  ? "bg-primary-600 text-white shadow-sm"
+                  : "bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-200 dark:hover:bg-slate-600"
               }`}
             >
               <FiShield className="inline w-4 h-4 mr-2" />
@@ -336,10 +337,10 @@ export default function ProfilsPage() {
           {canViewAgents && (
             <button
               onClick={() => setSelectedRole("agent_communal")}
-              className={`px-4 py-2 rounded-lg transition-colors ${
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
                 selectedRole === "agent_communal"
-                  ? "bg-primary-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  ? "bg-primary-600 text-white shadow-sm"
+                  : "bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-200 dark:hover:bg-slate-600"
               }`}
             >
               <FiBriefcase className="inline w-4 h-4 mr-2" />
@@ -349,10 +350,10 @@ export default function ProfilsPage() {
           {canViewAdmins && canViewAgents && (
             <button
               onClick={() => setSelectedRole("all")}
-              className={`px-4 py-2 rounded-lg transition-colors ${
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
                 selectedRole === "all"
-                  ? "bg-primary-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  ? "bg-primary-600 text-white shadow-sm"
+                  : "bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-200 dark:hover:bg-slate-600"
               }`}
             >
               <FiUsers className="inline w-4 h-4 mr-2" />
@@ -365,12 +366,12 @@ export default function ProfilsPage() {
       {/* Liste des utilisateurs - Mobile (cartes) */}
       <div className="md:hidden space-y-4">
         {users.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
+          <div className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/70 p-8 text-center text-gray-500 dark:text-slate-400">
             Aucun utilisateur trouvé
           </div>
         ) : (
           users.map((user) => (
-            <div key={user.id} className="bg-white rounded-lg shadow p-4">
+            <div key={user.id} className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/70 p-4">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
                   {user.avatar ? (
@@ -380,20 +381,20 @@ export default function ProfilsPage() {
                       className="w-12 h-12 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-bold">
+                    <div className="w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-950/50 flex items-center justify-center text-primary-600 dark:text-primary-400 font-bold">
                       {user.prenom?.[0]?.toUpperCase() ||
                         user.nom?.[0]?.toUpperCase() ||
                         "U"}
                     </div>
                   )}
                   <div>
-                    <div className="font-medium text-gray-900">
+                    <div className="font-semibold text-gray-900 dark:text-white">
                       {user.prenom} {user.nom}
                     </div>
-                    <div className="text-sm text-gray-500">{user.email}</div>
+                    <div className="text-sm text-gray-500 dark:text-slate-400">{user.email}</div>
                     <div className="flex items-center gap-2 mt-1">
                       {getRoleIcon(user.role)}
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-gray-500 dark:text-slate-400">
                         {getRoleLabel(user.role)}
                       </span>
                     </div>
@@ -405,7 +406,7 @@ export default function ProfilsPage() {
                       setSelectedUser(user);
                       fetchUserDetails(user.id);
                     }}
-                    className="text-primary-600 hover:text-primary-900 p-2"
+                    className="text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-950/40 p-2 rounded-lg"
                     title="Voir les détails"
                   >
                     <FiEye className="w-5 h-5" />
@@ -415,7 +416,7 @@ export default function ProfilsPage() {
                       user.role === "agent_communal")) && (
                     <button
                       onClick={() => handleDelete(user)}
-                      className="text-red-600 hover:text-red-900 p-2"
+                      className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 p-2 rounded-lg"
                       title="Supprimer"
                       disabled={user.id === currentUser?.id}
                     >
@@ -424,30 +425,30 @@ export default function ProfilsPage() {
                   )}
                 </div>
               </div>
-              <div className="space-y-2 pt-3 border-t">
+              <div className="space-y-2 pt-3 border-t border-gray-100 dark:border-slate-700/60">
                 {user.telephone && (
                   <div className="text-sm">
-                    <span className="text-gray-500">Téléphone:</span>{" "}
-                    <span className="text-gray-900">{user.telephone}</span>
+                    <span className="text-gray-500 dark:text-slate-400">Téléphone:</span>{" "}
+                    <span className="text-gray-900 dark:text-slate-100">{user.telephone}</span>
                   </div>
                 )}
                 {user.zone ? (
                   <div className="text-sm">
-                    <span className="text-gray-500">Zone:</span>{" "}
-                    <span className="text-gray-900">{user.zone.nom}</span>
-                    <span className="text-xs text-gray-400 ml-1">
+                    <span className="text-gray-500 dark:text-slate-400">Zone:</span>{" "}
+                    <span className="text-gray-900 dark:text-slate-100">{user.zone.nom}</span>
+                    <span className="text-xs text-gray-400 dark:text-slate-500 ml-1">
                       ({user.zone.type})
                     </span>
                   </div>
                 ) : (
-                  <div className="text-sm text-gray-400">Zone: Non assigné</div>
+                  <div className="text-sm text-gray-400 dark:text-slate-500">Zone: Non assigné</div>
                 )}
                 <div>
                   <span
-                    className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                    className={`inline-flex px-2.5 py-1 text-xs font-semibold rounded-full ${
                       user.actif
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
+                        ? "bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-300"
+                        : "bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-300"
                     }`}
                   >
                     {user.actif ? "Actif" : "Inactif"}
@@ -460,63 +461,63 @@ export default function ProfilsPage() {
       </div>
 
       {/* Liste des utilisateurs - Desktop */}
-      <div className="hidden md:block bg-white rounded-lg shadow overflow-hidden">
+      <div className="hidden md:block bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/70 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700/70">
+            <thead className="bg-gray-50 dark:bg-slate-800">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                   Utilisateur
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                   Contact
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                   Zone
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                   Statut
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-slate-800/40 divide-y divide-gray-100 dark:divide-slate-700/50">
               {users.length === 0 ? (
                 <tr>
                   <td
                     colSpan={5}
-                    className="px-6 py-12 text-center text-gray-500"
+                    className="px-6 py-12 text-center text-gray-500 dark:text-slate-400"
                   >
                     Aucun utilisateur trouvé
                   </td>
                 </tr>
               ) : (
                 users.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50">
+                  <tr key={user.id} className="hover:bg-gray-50/50 dark:hover:bg-slate-700/30 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         {user.avatar ? (
                           <img
                             src={user.avatar}
                             alt={`${user.prenom} ${user.nom}`}
-                            className="w-10 h-10 rounded-full object-cover mr-3"
+                            className="w-10 h-10 rounded-full object-cover mr-3 flex-shrink-0"
                           />
                         ) : (
-                          <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-bold mr-3">
+                          <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-950/50 flex items-center justify-center text-primary-600 dark:text-primary-400 font-bold mr-3 flex-shrink-0">
                             {user.prenom?.[0]?.toUpperCase() ||
                               user.nom?.[0]?.toUpperCase() ||
                               "U"}
                           </div>
                         )}
                         <div>
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-semibold text-gray-900 dark:text-slate-100">
                             {user.prenom} {user.nom}
                           </div>
                           <div className="flex items-center gap-2 mt-1">
                             {getRoleIcon(user.role)}
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs text-gray-500 dark:text-slate-400">
                               {getRoleLabel(user.role)}
                             </span>
                           </div>
@@ -524,9 +525,9 @@ export default function ProfilsPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{user.email}</div>
+                      <div className="text-sm text-gray-900 dark:text-slate-100">{user.email}</div>
                       {user.telephone && (
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-gray-500 dark:text-slate-400">
                           {user.telephone}
                         </div>
                       )}
@@ -534,25 +535,25 @@ export default function ProfilsPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       {user.zone ? (
                         <div>
-                          <div className="text-sm text-gray-900">
+                          <div className="text-sm text-gray-900 dark:text-slate-100">
                             {user.zone.nom}
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-gray-500 dark:text-slate-400">
                             {user.zone.type}
                           </div>
                         </div>
                       ) : (
-                        <span className="text-sm text-gray-400">
+                        <span className="text-sm text-gray-400 dark:text-slate-500">
                           Non assigné
                         </span>
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        className={`inline-flex px-2.5 py-1 text-xs font-semibold rounded-full ${
                           user.actif
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
+                            ? "bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-300"
+                            : "bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-300"
                         }`}
                       >
                         {user.actif ? "Actif" : "Inactif"}
@@ -565,7 +566,7 @@ export default function ProfilsPage() {
                             setSelectedUser(user);
                             fetchUserDetails(user.id);
                           }}
-                          className="text-primary-600 hover:text-primary-900 p-2 hover:bg-primary-50 rounded"
+                          className="text-primary-600 dark:text-primary-400 hover:text-primary-900 p-2 hover:bg-primary-50 dark:hover:bg-primary-950/40 rounded-lg transition"
                           title="Voir les détails"
                         >
                           <FiEye className="w-5 h-5" />
@@ -575,7 +576,7 @@ export default function ProfilsPage() {
                             user.role === "agent_communal")) && (
                           <button
                             onClick={() => handleDelete(user)}
-                            className="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded"
+                            className="text-red-600 dark:text-red-400 hover:text-red-900 p-2 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg transition"
                             title="Supprimer le compte"
                             disabled={user.id === currentUser?.id}
                           >
@@ -594,17 +595,16 @@ export default function ProfilsPage() {
 
       {/* Modal de création d'agent */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-100 dark:border-slate-800">
             <div className="p-4 md:p-6">
               <div className="flex justify-between items-start mb-6">
                 <div>
-                  <h2 className="text-xl md:text-2xl font-bold text-gray-900">
+                  <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
                     Créer un Agent Communal
                   </h2>
-                  <p className="text-sm md:text-base text-gray-600 mt-1">
-                    Remplissez les informations pour créer un nouveau compte
-                    agent
+                  <p className="text-sm md:text-base text-gray-600 dark:text-slate-400 mt-1">
+                    Remplissez les informations pour créer un nouveau compte agent
                   </p>
                 </div>
                 <button
@@ -621,7 +621,7 @@ export default function ProfilsPage() {
                     });
                     setError("");
                   }}
-                  className="text-gray-400 hover:text-gray-600 p-2"
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 p-2"
                 >
                   <FiX className="w-6 h-6" />
                 </button>
@@ -632,14 +632,14 @@ export default function ProfilsPage() {
                 className="space-y-4 md:space-y-6"
               >
                 {error && (
-                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                  <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-300 px-4 py-3 rounded-xl text-sm">
                     {error}
                   </div>
                 )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                       Nom <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -649,13 +649,13 @@ export default function ProfilsPage() {
                         setFormData({ ...formData, nom: e.target.value })
                       }
                       required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-[#96D0EE] focus:outline-none text-sm"
                       placeholder="Nom"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                       Prénom <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -665,13 +665,13 @@ export default function ProfilsPage() {
                         setFormData({ ...formData, prenom: e.target.value })
                       }
                       required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-[#96D0EE] focus:outline-none text-sm"
                       placeholder="Prénom"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                       Email <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -681,13 +681,13 @@ export default function ProfilsPage() {
                         setFormData({ ...formData, email: e.target.value })
                       }
                       required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-[#96D0EE] focus:outline-none text-sm"
                       placeholder="email@example.com"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                       Téléphone
                     </label>
                     <input
@@ -696,13 +696,13 @@ export default function ProfilsPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, telephone: e.target.value })
                       }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-[#96D0EE] focus:outline-none text-sm"
                       placeholder="+229..."
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                       Mot de passe <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -713,15 +713,15 @@ export default function ProfilsPage() {
                       }
                       required
                       minLength={6}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-[#96D0EE] focus:outline-none text-sm"
                       placeholder="Minimum 6 caractères"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                       Zone{" "}
-                      <span className="text-xs text-gray-500">(optionnel)</span>
+                      <span className="text-xs text-gray-500 dark:text-slate-400">(optionnel)</span>
                     </label>
                     <div className="space-y-2">
                       <select
@@ -733,7 +733,7 @@ export default function ProfilsPage() {
                             zone_nom: "",
                           })
                         }
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-[#96D0EE] focus:outline-none text-sm"
                         disabled={loadingZones}
                       >
                         <option value="">
@@ -746,9 +746,9 @@ export default function ProfilsPage() {
                         ))}
                       </select>
                       <div className="flex items-center gap-2">
-                        <div className="flex-1 border-t border-gray-300"></div>
-                        <span className="text-xs text-gray-500">OU</span>
-                        <div className="flex-1 border-t border-gray-300"></div>
+                        <div className="flex-1 border-t border-gray-200 dark:border-slate-700"></div>
+                        <span className="text-xs text-gray-500 dark:text-slate-400">OU</span>
+                        <div className="flex-1 border-t border-gray-200 dark:border-slate-700"></div>
                       </div>
                       <input
                         type="text"
@@ -761,17 +761,13 @@ export default function ProfilsPage() {
                           })
                         }
                         placeholder="Saisir une zone personnalisée (optionnel)"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-[#96D0EE] focus:outline-none text-sm"
                       />
-                      <p className="text-xs text-gray-500">
-                        Vous pouvez sélectionner une zone existante ou saisir
-                        une zone personnalisée
-                      </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4 border-t">
+                <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4 border-t border-gray-100 dark:border-slate-800">
                   <button
                     type="button"
                     onClick={() => {
@@ -787,13 +783,13 @@ export default function ProfilsPage() {
                       });
                       setError("");
                     }}
-                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                    className="px-4 py-2 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200 rounded-xl hover:bg-gray-200 dark:hover:bg-slate-600 transition text-sm font-medium"
                   >
                     Annuler
                   </button>
                   <button
                     type="submit"
-                    className="flex items-center justify-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl transition text-sm font-medium shadow-sm"
                   >
                     <FiSave className="w-5 h-5" />
                     Créer l'Agent
@@ -807,15 +803,15 @@ export default function ProfilsPage() {
 
       {/* Modal de détails */}
       {showDetailsModal && selectedUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-100 dark:border-slate-800">
             <div className="p-4 md:p-6">
               <div className="flex justify-between items-start mb-6">
                 <div>
-                  <h2 className="text-xl md:text-2xl font-bold text-gray-900">
+                  <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
                     Profil de {selectedUser.prenom} {selectedUser.nom}
                   </h2>
-                  <p className="text-sm md:text-base text-gray-600 mt-1">
+                  <p className="text-sm md:text-base text-gray-600 dark:text-slate-400 mt-1">
                     {selectedUser.email}
                   </p>
                 </div>
@@ -825,7 +821,7 @@ export default function ProfilsPage() {
                     setSelectedUser(null);
                     setUserDetails(null);
                   }}
-                  className="text-gray-400 hover:text-gray-600 p-2"
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 p-2"
                 >
                   <FiX className="w-6 h-6" />
                 </button>
@@ -834,33 +830,33 @@ export default function ProfilsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
                 <div className="space-y-3 md:space-y-4">
                   <div>
-                    <label className="text-sm text-gray-500">Rôle</label>
-                    <p className="font-medium">
+                    <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Rôle</label>
+                    <p className="font-medium text-gray-900 dark:text-slate-100">
                       {getRoleLabel(selectedUser.role)}
                     </p>
                   </div>
                   {selectedUser.telephone && (
                     <div>
-                      <label className="text-sm text-gray-500">Téléphone</label>
-                      <p className="font-medium">{selectedUser.telephone}</p>
+                      <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Téléphone</label>
+                      <p className="font-medium text-gray-900 dark:text-slate-100">{selectedUser.telephone}</p>
                     </div>
                   )}
                   {selectedUser.zone && (
                     <div>
-                      <label className="text-sm text-gray-500">
+                      <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                         Zone assignée
                       </label>
-                      <p className="font-medium">{selectedUser.zone.nom}</p>
-                      <p className="text-sm text-gray-400">
+                      <p className="font-medium text-gray-900 dark:text-slate-100">{selectedUser.zone.nom}</p>
+                      <p className="text-xs text-gray-400 dark:text-slate-500">
                         {selectedUser.zone.type}
                       </p>
                     </div>
                   )}
                   <div>
-                    <label className="text-sm text-gray-500">
+                    <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Membre depuis
                     </label>
-                    <p className="font-medium">
+                    <p className="font-medium text-gray-900 dark:text-slate-100">
                       {new Date(selectedUser.created_at).toLocaleDateString(
                         "fr-FR",
                         {
@@ -873,12 +869,12 @@ export default function ProfilsPage() {
                   </div>
                   {selectedUser.cree_par && (
                     <div>
-                      <label className="text-sm text-gray-500">Créé par</label>
-                      <p className="font-medium">
+                      <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Créé par</label>
+                      <p className="font-medium text-gray-900 dark:text-slate-100">
                         {selectedUser.cree_par.prenom}{" "}
                         {selectedUser.cree_par.nom}
                       </p>
-                      <p className="text-sm text-gray-400">
+                      <p className="text-xs text-gray-400 dark:text-slate-500">
                         {selectedUser.cree_par.email}
                       </p>
                     </div>
@@ -887,40 +883,40 @@ export default function ProfilsPage() {
 
                 {userDetails && (
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-4">
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-4">
                       Statistiques
                     </h3>
                     <div className="grid grid-cols-2 gap-3 md:gap-4">
-                      <div className="bg-primary-50 rounded-lg p-4">
-                        <p className="text-sm text-gray-600">
+                      <div className="bg-primary-50 dark:bg-primary-950/40 border border-primary-100 dark:border-primary-800/40 rounded-2xl p-4">
+                        <p className="text-xs font-medium text-gray-600 dark:text-slate-400">
                           Infrastructures créées
                         </p>
-                        <p className="text-2xl font-bold text-primary-600 mt-1">
+                        <p className="text-2xl font-bold text-primary-600 dark:text-primary-400 mt-1">
                           {userDetails.infrastructuresCreesCount}
                         </p>
                       </div>
-                      <div className="bg-green-50 rounded-lg p-4">
-                        <p className="text-sm text-gray-600">
+                      <div className="bg-green-50 dark:bg-green-950/40 border border-green-100 dark:border-green-800/40 rounded-2xl p-4">
+                        <p className="text-xs font-medium text-gray-600 dark:text-slate-400">
                           Propositions validées
                         </p>
-                        <p className="text-2xl font-bold text-green-600 mt-1">
+                        <p className="text-2xl font-bold text-green-600 dark:text-green-400 mt-1">
                           {userDetails.propositionsValideesCount}
                         </p>
                       </div>
-                      <div className="bg-yellow-50 rounded-lg p-4">
-                        <p className="text-sm text-gray-600">
+                      <div className="bg-yellow-50 dark:bg-yellow-950/40 border border-yellow-100 dark:border-yellow-800/40 rounded-2xl p-4">
+                        <p className="text-xs font-medium text-gray-600 dark:text-slate-400">
                           Signalements traités
                         </p>
-                        <p className="text-2xl font-bold text-yellow-600 mt-1">
+                        <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mt-1">
                           {userDetails.signalementsTraitesCount}
                         </p>
                       </div>
                       {selectedUser.role === "agent_communal" && (
-                        <div className="bg-blue-50 rounded-lg p-4">
-                          <p className="text-sm text-gray-600">
+                        <div className="bg-blue-50 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-800/40 rounded-2xl p-4">
+                          <p className="text-xs font-medium text-gray-600 dark:text-slate-400">
                             Signalements assignés
                           </p>
-                          <p className="text-2xl font-bold text-blue-600 mt-1">
+                          <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1">
                             {userDetails.signalementsAssignesCount}
                           </p>
                         </div>

@@ -68,22 +68,22 @@ export default function Sidebar() {
   };
 
   return (
-    <div className="hidden md:flex w-64 bg-[#004B70]/100 text-white flex-col h-screen">
-      <div className="p-4 md:p-6 border-b border-gray-800">
+    <div className="hidden md:flex w-64 bg-[#004B70] dark:bg-[#002f48] border-r border-transparent dark:border-slate-800 text-white flex-col h-screen shadow-xl z-20 transition-colors">
+      <div className="p-6 border-b border-white/10">
         <div className="flex items-center gap-3">
-          <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0">
+          <div className="relative w-12 h-12 flex-shrink-0 bg-white/10 rounded-xl p-1 shadow-inner">
             <Image
               src="/images/logo1.png"
               alt="KutonouTché Logo"
               fill
-              className="object-contain"
+              className="object-contain drop-shadow-sm p-1"
               priority
             />
           </div>
           <div>
-            <h1 className="text-lg md:text-xl font-bold">KutonouTché</h1>
-            <p className="text-xs md:text-sm text-gray-400 mt-1">
-              Tableau de bord
+            <h1 className="text-xl font-bold tracking-tight">KutonouTché</h1>
+            <p className="text-xs text-[#96D0EE] font-medium mt-0.5 uppercase tracking-wider">
+              Dashboard
             </p>
           </div>
         </div>
@@ -110,13 +110,16 @@ export default function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 rounded-lg transition-colors text-sm md:text-base ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-sm font-medium relative group ${
                   isActive
-                    ? "bg-[#96D0EE]/100 text-white"
-                    : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                    ? "bg-white/10 text-white shadow-sm"
+                    : "text-white/70 hover:bg-white/5 hover:text-white"
                 }`}
               >
-                <Icon className="w-4 h-4 md:w-5 md:h-5" />
+                {isActive && (
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-[#96D0EE] rounded-r-full shadow-[0_0_8px_#96D0EE]"></div>
+                )}
+                <Icon className={`w-5 h-5 transition-transform duration-200 group-hover:scale-110 ${isActive ? "text-[#96D0EE]" : ""}`} />
                 <span>{item.label}</span>
               </Link>
             );
@@ -137,36 +140,39 @@ export default function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 rounded-lg transition-colors text-sm md:text-base ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-sm font-medium relative group ${
                   isActive
-                    ? "bg-[#96D0EE]/100 text-white"
-                    : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                    ? "bg-white/10 text-white shadow-sm"
+                    : "text-white/70 hover:bg-white/5 hover:text-white"
                 }`}
               >
-                <Icon className="w-4 h-4 md:w-5 md:h-5" />
+                {isActive && (
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-[#96D0EE] rounded-r-full shadow-[0_0_8px_#96D0EE]"></div>
+                )}
+                <Icon className={`w-5 h-5 transition-transform duration-200 group-hover:scale-110 ${isActive ? "text-[#96D0EE]" : ""}`} />
                 <span>{item.label}</span>
               </Link>
             );
           })}
       </nav>
 
-      <div className="p-2 md:p-4 border-t border-gray-800">
-        <div className="px-2 md:px-4 py-2 text-xs md:text-sm text-gray-400 mb-2">
-          <div className="font-medium text-white truncate">
+      <div className="p-4 border-t border-white/10 bg-black/10">
+        <div className="px-2 py-2 mb-3">
+          <div className="font-semibold text-white truncate text-sm">
             {user?.prenom} {user?.nom}
           </div>
-          <div className="text-xs truncate">{user?.email}</div>
-          <div className="text-xs mt-1">
-            <span className="px-2 py-1 bg-[#96D0EE]/100 rounded text-white">
+          <div className="text-xs text-white/60 truncate mt-0.5">{user?.email}</div>
+          <div className="mt-2 flex">
+            <span className="px-2 py-0.5 bg-[#96D0EE]/20 border border-[#96D0EE]/30 text-[#96D0EE] rounded-md text-[10px] font-bold uppercase tracking-wider">
               {user?.role}
             </span>
           </div>
         </div>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors text-sm md:text-base"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-white/70 hover:bg-red-500/20 hover:text-red-300 transition-colors text-sm font-medium"
         >
-          <FiLogOut className="w-4 h-4 md:w-5 md:h-5" />
+          <FiLogOut className="w-4 h-4" />
           <span>Déconnexion</span>
         </button>
       </div>

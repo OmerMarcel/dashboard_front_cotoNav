@@ -9,6 +9,7 @@ import {
   FiTrash2,
   FiXCircle,
 } from "react-icons/fi";
+import LogoLoader from "@/components/LogoLoader";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
@@ -161,15 +162,15 @@ export default function AvisDashboardPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Avis</h1>
-          <p className="text-gray-600 mt-1">
-            Moderation et suivi des commentaires utilisateurs
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Avis</h1>
+          <p className="text-gray-600 dark:text-slate-400 mt-1">
+            Modération et suivi des commentaires utilisateurs
           </p>
         </div>
         <button
           type="button"
           onClick={() => fetchAvis()}
-          className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+          className="inline-flex items-center gap-2 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-200 shadow-sm hover:bg-gray-50 dark:hover:bg-slate-700 transition"
         >
           <FiRefreshCw />
           Actualiser
@@ -179,7 +180,7 @@ export default function AvisDashboardPage() {
       <div className="flex flex-wrap gap-2">
         {[
           { key: "all", label: "Tous" },
-          { key: "approved", label: "Approuves" },
+          { key: "approved", label: "Approuvés" },
           { key: "pending", label: "En attente" },
         ].map((item) => (
           <button
@@ -191,8 +192,8 @@ export default function AvisDashboardPage() {
             }}
             className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
               filter === item.key
-                ? "bg-[#004B70] text-white"
-                : "bg-white text-gray-700 border border-gray-200"
+                ? "bg-[#004B70] text-white shadow-sm"
+                : "bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700"
             }`}
           >
             {item.label}
@@ -200,74 +201,74 @@ export default function AvisDashboardPage() {
         ))}
       </div>
 
-      <div className="bg-white rounded-lg shadow">
+      <div className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/70 overflow-hidden">
         {loading ? (
-          <div className="flex items-center justify-center py-16">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-600"></div>
+          <div className="flex items-center justify-center py-20">
+            <LogoLoader size="lg" text="Chargement des avis..." />
           </div>
         ) : avis.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-gray-500">
+          <div className="flex flex-col items-center justify-center py-16 text-gray-500 dark:text-slate-400">
             <FiMessageSquare className="h-10 w-10 mb-3" />
             Aucun avis pour ce filtre.
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700/70">
+              <thead className="bg-gray-50 dark:bg-slate-800">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                     Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                     Infrastructure
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                     Utilisateur
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                     Note
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                     Commentaire
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                     Statut
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white dark:bg-slate-800/40 divide-y divide-gray-100 dark:divide-slate-700/50">
                 {avis.map((item) => {
                   const createdAt = item.created_at || item.createdAt;
                   const isApproved = item.approuve !== false;
                   return (
-                    <tr key={item.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <tr key={item.id} className="hover:bg-gray-50/50 dark:hover:bg-slate-700/30 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
                         {formatDate(createdAt)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-slate-100">
                         {formatInfra(item.infrastructure)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
                         {formatUser(item.utilisateur)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
                         {item.note}/5
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-500 max-w-md">
+                      <td className="px-6 py-4 text-sm text-gray-600 dark:text-slate-300 max-w-md">
                         {item.commentaire?.trim() || "-"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <span
                           className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
                             isApproved
-                              ? "bg-green-100 text-green-700"
-                              : "bg-orange-100 text-orange-700"
+                              ? "bg-green-100 dark:bg-green-950/40 text-green-700 dark:text-green-300"
+                              : "bg-orange-100 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300"
                           }`}
                         >
-                          {isApproved ? "Approuve" : "En attente"}
+                          {isApproved ? "Approuvé" : "En attente"}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
@@ -277,7 +278,7 @@ export default function AvisDashboardPage() {
                               type="button"
                               onClick={() => handleModeration(item.id, false)}
                               disabled={actionId === item.id}
-                              className="inline-flex items-center gap-1 rounded-md border border-red-200 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+                              className="inline-flex items-center gap-1 rounded-lg border border-red-200 dark:border-red-800/60 px-2.5 py-1 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 disabled:opacity-50 transition"
                             >
                               <FiXCircle />
                               Rejeter
@@ -287,7 +288,7 @@ export default function AvisDashboardPage() {
                               type="button"
                               onClick={() => handleModeration(item.id, true)}
                               disabled={actionId === item.id}
-                              className="inline-flex items-center gap-1 rounded-md border border-green-200 px-2 py-1 text-xs font-medium text-green-700 hover:bg-green-50 disabled:opacity-50"
+                              className="inline-flex items-center gap-1 rounded-lg border border-green-200 dark:border-green-800/60 px-2.5 py-1 text-xs font-medium text-green-700 dark:text-green-300 hover:bg-green-50 dark:hover:bg-green-950/30 disabled:opacity-50 transition"
                             >
                               <FiCheckCircle />
                               Approuver
@@ -297,7 +298,7 @@ export default function AvisDashboardPage() {
                             type="button"
                             onClick={() => handleDelete(item.id)}
                             disabled={actionId === item.id}
-                            className="inline-flex items-center gap-1 rounded-md border border-gray-200 px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+                            className="inline-flex items-center gap-1 rounded-lg border border-gray-200 dark:border-slate-700 px-2.5 py-1 text-xs font-medium text-gray-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 transition"
                           >
                             <FiTrash2 />
                             Supprimer
@@ -319,18 +320,18 @@ export default function AvisDashboardPage() {
             type="button"
             onClick={() => setPage((prev) => Math.max(1, prev - 1))}
             disabled={page <= 1}
-            className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm disabled:opacity-50"
+            className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-200 shadow-sm disabled:opacity-50 hover:bg-gray-50 dark:hover:bg-slate-700 transition"
           >
-            Precedent
+            Précédent
           </button>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-gray-500 dark:text-slate-400">
             Page {page} / {totalPages}
           </span>
           <button
             type="button"
             onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
             disabled={page >= totalPages}
-            className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm disabled:opacity-50"
+            className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-200 shadow-sm disabled:opacity-50 hover:bg-gray-50 dark:hover:bg-slate-700 transition"
           >
             Suivant
           </button>

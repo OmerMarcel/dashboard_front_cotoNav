@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import axios from "axios";
 import { FiMapPin, FiHeart, FiTrash2, FiArrowLeft } from "react-icons/fi";
+import LogoLoader from "@/components/LogoLoader";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
@@ -162,21 +163,25 @@ export default function FavorisPage() {
   };
 
   if (loading) {
-    return <div className="text-center py-12">Chargement...</div>;
+    return (
+      <div className="flex items-center justify-center py-24">
+        <LogoLoader size="lg" text="Chargement des favoris..." />
+      </div>
+    );
   }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
             <FiHeart className="text-red-500 fill-current" />
             Favoris des utilisateurs
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-gray-600 dark:text-slate-400 mt-1">
             Retrouvez ici toutes les infrastructures ajoutées en favoris par
             tous les utilisateurs (application mobile et dashboard).
-            <span className="text-xs text-gray-500 block mt-1">
+            <span className="text-xs text-gray-500 dark:text-slate-500 block mt-1">
               Mise à jour automatique toutes les 3 secondes • Total:{" "}
               {favorites.length} favori(s)
             </span>
@@ -188,7 +193,7 @@ export default function FavorisPage() {
               setLoading(true);
               fetchFavorites();
             }}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-200 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors shadow-sm"
             title="Rafraîchir la liste"
           >
             <svg
@@ -208,7 +213,7 @@ export default function FavorisPage() {
           </button>
           <Link
             href="/dashboard/infrastructures"
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-200 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors shadow-sm"
           >
             <FiArrowLeft />
             Retour aux infrastructures
@@ -217,24 +222,24 @@ export default function FavorisPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+        <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-300 px-4 py-3 rounded-xl">
           {error}
         </div>
       )}
 
       {favorites.length === 0 ? (
-        <div className="bg-white rounded-lg shadow p-8 text-center space-y-4">
-          <FiHeart className="w-12 h-12 text-red-300 mx-auto" />
-          <div className="text-xl font-semibold text-gray-900">
+        <div className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/70 p-8 text-center space-y-4">
+          <FiHeart className="w-12 h-12 text-red-300 dark:text-red-400 mx-auto" />
+          <div className="text-xl font-semibold text-gray-900 dark:text-white">
             Aucun favori pour l'instant
           </div>
-          <p className="text-gray-500">
+          <p className="text-gray-500 dark:text-slate-400">
             Aucun utilisateur n'a encore ajouté d'infrastructure en favori
             depuis l'application mobile.
           </p>
           <Link
             href="/dashboard/infrastructures"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-medium transition-all shadow-sm"
           >
             Parcourir les infrastructures
           </Link>
@@ -248,24 +253,24 @@ export default function FavorisPage() {
             return (
               <div
                 key={infraId}
-                className="bg-white rounded-lg shadow p-5 space-y-4"
+                className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700/70 p-5 space-y-4 hover:shadow-md transition-all"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <p className="text-xs uppercase text-gray-400">
+                    <p className="text-xs uppercase tracking-wider text-gray-400 dark:text-slate-500 font-semibold">
                       {getTypeLabel(infra.type)}
                     </p>
-                    <h2 className="text-xl font-semibold text-gray-900">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white mt-1">
                       {infra.nom}
                     </h2>
                     {infra.addedBy && (
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">
                         Ajouté par:{" "}
-                        <span className="font-medium">
+                        <span className="font-medium text-gray-700 dark:text-slate-300">
                           {infra.addedBy.fullName}
                         </span>
                         {infra.addedAt && (
-                          <span className="ml-2">
+                          <span className="ml-2 text-gray-400 dark:text-slate-500">
                             •{" "}
                             {new Date(infra.addedAt).toLocaleDateString(
                               "fr-FR",
@@ -284,8 +289,8 @@ export default function FavorisPage() {
                   </div>
                 </div>
 
-                <p className="text-sm text-gray-500 flex items-start gap-2">
-                  <FiMapPin className="w-4 h-4 text-primary-500 mt-0.5" />
+                <p className="text-sm text-gray-500 dark:text-slate-400 flex items-start gap-2">
+                  <FiMapPin className="w-4 h-4 text-primary-500 mt-0.5 flex-shrink-0" />
                   <span>
                     {infra.localisation?.adresse || "Adresse non renseignée"}
                     {infra.localisation?.quartier
@@ -295,13 +300,13 @@ export default function FavorisPage() {
                 </p>
 
                 {infra.description && (
-                  <p className="text-sm text-gray-600 line-clamp-3">
+                  <p className="text-sm text-gray-600 dark:text-slate-300 line-clamp-3">
                     {infra.description}
                   </p>
                 )}
 
-                <div className="flex items-center justify-between text-sm text-gray-500">
-                  <span>{infra.etat || "État inconnu"}</span>
+                <div className="flex items-center justify-between text-sm text-gray-500 dark:text-slate-400">
+                  <span className="capitalize">{infra.etat || "État inconnu"}</span>
                   <span>
                     {((infra.noteMoyenne ?? infra.note_moyenne) || 0).toFixed(
                       1,
@@ -311,16 +316,16 @@ export default function FavorisPage() {
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between pt-2">
+                <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-slate-700/60">
                   <Link
                     href={`/dashboard/infrastructures/${infraId}`}
-                    className="text-primary-600 hover:text-primary-800 text-sm font-medium"
+                    className="text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 text-sm font-medium"
                   >
                     Voir la fiche
                   </Link>
                   <button
                     onClick={() => handleRemoveFavorite(infraId)}
-                    className="inline-flex items-center gap-2 text-sm text-red-500 hover:text-red-600"
+                    className="inline-flex items-center gap-2 text-sm text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300"
                   >
                     <FiTrash2 />
                     Retirer

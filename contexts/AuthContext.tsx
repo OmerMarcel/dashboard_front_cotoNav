@@ -10,6 +10,7 @@ interface User {
   prenom: string
   email: string
   role: string
+  avatar?: string
 }
 
 interface AuthContextType {
@@ -19,6 +20,8 @@ interface AuthContextType {
   logout: () => void
   token: string | null
   firebaseAuthenticated: boolean
+  updateUser: (data: Partial<User>) => void
+  refreshUser: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -135,8 +138,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const updateUser = (data: Partial<User>) => {
+    setUser((prev) => (prev ? { ...prev, ...data } : null))
+  }
+
+  const refreshUser = async () => {
+    if (token) {
+      await fetchUser(token)
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, token, firebaseAuthenticated }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        login,
+        logout,
+        token,
+        firebaseAuthenticated,
+        updateUser,
+        refreshUser,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )
