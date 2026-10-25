@@ -164,6 +164,7 @@ interface ChartProps {
   xAxisFontSize?: number
   height?: number
   color?: string // couleur principale pour bar/line/area (optionnel)
+  showLegend?: boolean // Afficher la légende sous le graphique (défaut : false)
 }
 
 // ─── Composant principal ─────────────────────────────────────────────────────
@@ -175,6 +176,7 @@ export default function Chart({
   xAxisFontSize,
   height = 320,
   color,
+  showLegend = false,
 }: ChartProps) {
   const [activeIndex, setActiveIndex] = useState(0)
   const { isDark } = useTheme()
@@ -212,14 +214,14 @@ export default function Chart({
               data={pieData}
               cx="50%"
               cy="50%"
-              innerRadius={height * 0.22}
-              outerRadius={height * 0.35}
+              innerRadius={height * 0.25}
+              outerRadius={height * 0.40}
               dataKey="value"
               nameKey="name"
               activeIndex={activeIndex}
               activeShape={createRenderActiveShape(isDark)}
               onMouseEnter={(_, idx) => setActiveIndex(idx)}
-              paddingAngle={3}
+              paddingAngle={2.5}
               strokeWidth={0}
             >
               {pieData.map((entry, index) => (
@@ -235,7 +237,7 @@ export default function Chart({
             <Tooltip content={<PieTooltip />} />
           </PieChart>
         </ResponsiveContainer>
-        <CustomLegend data={pieData} isDark={isDark} />
+        {showLegend && <CustomLegend data={pieData} isDark={isDark} />}
       </div>
     )
   }
