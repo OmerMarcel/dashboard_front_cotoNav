@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
-import { FiArrowLeft, FiSave, FiMapPin, FiImage, FiX } from "react-icons/fi";
+import { FiArrowLeft, FiSave, FiMapPin, FiImage, FiX, FiCheck } from "react-icons/fi";
 import Link from "next/link";
 import LogoLoader from "@/components/LogoLoader";
 
@@ -19,6 +19,7 @@ export default function EditInfrastructurePage() {
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
   const [error, setError] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const defaultHoraires = {
     lundi: { ouvert: true, debut: "08:00", fin: "18:00" },
     mardi: { ouvert: true, debut: "08:00", fin: "18:00" },
@@ -85,19 +86,19 @@ export default function EditInfrastructurePage() {
         },
       });
 
-      const infra = response.data?.data ?? response.data;
+      const infra = response.data?.data ?? response.data?.infrastructure ?? response.data;
       const localisation = infra.localisation || {};
       const coordinates = localisation.coordinates || [];
 
       setFormData({
-        nom: infra.nom || "",
-        type: infra.type || "toilettes_publiques",
+        nom: infra.nom || infra.name || "",
+        type: infra.type || infra.category || "autre",
         description: infra.description || "",
-        adresse: localisation.adresse || "",
+        adresse: localisation.adresse || localisation.address || infra.address || "",
         quartier: localisation.quartier || "",
         commune: localisation.commune || "Cotonou",
-        latitude: coordinates[1]?.toString() || "",
-        longitude: coordinates[0]?.toString() || "",
+        latitude: (coordinates[1] ?? infra.latitude ?? localisation.latitude ?? "")?.toString(),
+        longitude: (coordinates[0] ?? infra.longitude ?? localisation.longitude ?? "")?.toString(),
         telephone: infra.contact?.telephone || "",
         email: infra.contact?.email || "",
         etat: infra.etat || "bon",
@@ -326,7 +327,13 @@ export default function EditInfrastructurePage() {
         },
       });
 
-      router.push(`/dashboard/infrastructures/${id}`);
+      // Émettre un événement pour rafraîchir les listes
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("infrastructureCreated"));
+      }
+
+      // Afficher le popup de succès
+      setShowSuccessModal(true);
     } catch (err: any) {
       setError(
         err.response?.data?.message ||
@@ -373,7 +380,7 @@ export default function EditInfrastructurePage() {
             href={
               isReadOnly
                 ? "/dashboard/infrastructures"
-                : `/dashboard/infrastructures/${id}`
+                : "/dashboard/infrastructures"
             }
             className="text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-800 transition"
           >
@@ -967,7 +974,7 @@ export default function EditInfrastructurePage() {
             href={
               isReadOnly
                 ? "/dashboard/infrastructures"
-                : `/dashboard/infrastructures/${id}`
+                : "/dashboard/infrastructures"
             }
             className="px-6 py-2.5 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 font-medium text-sm transition text-center"
           >
@@ -994,6 +1001,43 @@ export default function EditInfrastructurePage() {
           )}
         </div>
       </form>
+
+      {/* Modal Popup de confirmation de succès */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-gray-100 dark:border-slate-700 text-center animate-in zoom-in-95 duration-200">
+            <div className="w-16 h-16 bg-green-100 dark:bg-green-950/60 text-green-600 dark:text-green-400 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+              <FiCheck className="w-8 h-8" />
+            </div>
+
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              Informations enregistrées !
+            </h3>
+
+            <p className="text-sm text-gray-600 dark:text-slate-300 mb-6 leading-relaxed">
+              Les modifications de l&apos;infrastructure <strong>« {formData.nom} »</strong> ont été enregistrées avec succès dans la base de données et sont désormais à jour sur votre tableau de bord et sur l&apos;application mobile.
+            </p>
+
+            <div className="space-y-2">
+              <button
+                type="button"
+                onClick={() => router.push("/dashboard/infrastructures")}
+                className="w-full py-3 px-4 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-semibold text-sm transition shadow-sm hover:shadow"
+              >
+                Retourner aux infrastructures
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowSuccessModal(false)}
+                className="w-full py-2.5 px-4 text-xs font-medium text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-200 transition"
+              >
+                Continuer à modifier
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
-  );
+);
 }
