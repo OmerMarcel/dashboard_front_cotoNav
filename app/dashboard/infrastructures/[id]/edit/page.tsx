@@ -30,15 +30,52 @@ export default function EditInfrastructurePage() {
     dimanche: { ouvert: false, debut: "08:00", fin: "18:00" },
   };
 
-  const normalizeHoraires = (input?: Partial<typeof defaultHoraires>) => {
+  const normalizeHoraires = (input?: any) => {
     const normalized = { ...defaultHoraires };
+    if (!input || typeof input !== 'object') return normalized;
+
+    const DAY_MAP_EN_TO_FR: Record<string, string> = {
+      monday: 'lundi',
+      tuesday: 'mardi',
+      wednesday: 'mercredi',
+      thursday: 'jeudi',
+      friday: 'vendredi',
+      saturday: 'samedi',
+      sunday: 'dimanche',
+    };
+
     Object.keys(defaultHoraires).forEach((jour) => {
-      const value = input?.[jour as keyof typeof defaultHoraires];
+      const enKey = Object.keys(DAY_MAP_EN_TO_FR).find(
+        (k) => DAY_MAP_EN_TO_FR[k] === jour
+      );
+      const value = input[jour] || (enKey ? input[enKey] : undefined);
       if (value) {
-        normalized[jour as keyof typeof defaultHoraires] = {
-          ...defaultHoraires[jour as keyof typeof defaultHoraires],
-          ...value,
-        };
+        if (typeof value === 'object') {
+          const isOuvert =
+            value.ouvert !== undefined
+              ? (value.ouvert === true || value.ouvert === 'true')
+              : value.open !== undefined
+                ? Boolean(value.open && value.open !== 'false')
+                : defaultHoraires[jour as keyof typeof defaultHoraires].ouvert;
+
+          normalized[jour as keyof typeof defaultHoraires] = {
+            ...defaultHoraires[jour as keyof typeof defaultHoraires],
+            ...value,
+            debut: value.debut || value.open || '08:00',
+            fin: value.fin || value.close || '18:00',
+            ouvert: isOuvert,
+          };
+        } else if (typeof value === 'string') {
+          const isFerme =
+            value.toLowerCase().includes('fermé') ||
+            value.toLowerCase().includes('ferme') ||
+            value.toLowerCase().includes('closed');
+          normalized[jour as keyof typeof defaultHoraires] = {
+            debut: '08:00',
+            fin: '18:00',
+            ouvert: !isFerme,
+          };
+        }
       }
     });
     return normalized;
